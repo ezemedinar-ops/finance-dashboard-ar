@@ -1,17 +1,9 @@
-// js/config.example.js — template para configuración local
-// Copiá este archivo como js/config.js y completá tus keys.
-// js/config.js está en .gitignore — nunca se commitea.
-
-window.DFA_CONFIG = {
-
-  // ── Opción A: Sin backend (directo a APIs externas) ──────────────────────
-  // Necesitás una CoinGecko API key (Demo gratuita)
-  // Obtener en: https://www.coingecko.com/api/pricing
-  COINGECKO_API_KEY: '',
-
-  // ── Opción B: Con backend (recomendado) ──────────────────────────────────
-  // Cuando BACKEND_URL está seteado, la API key de CoinGecko no es necesaria
-  // en el frontend (se maneja del lado del servidor).
-  // BACKEND_URL: 'https://tu-backend.railway.app'
-
-};
+// js/config.example.js
+//
+// Este archivo ya NO es necesario para el funcionamiento normal.
+//
+// Toda la configuración sensible (API keys) vive en backend/.env
+// El frontend no necesita ningún secreto — solo habla con el backend.
+//
+// BACKEND_URL se configura directamente en js/api.js (constante PROD_BACKEND).
+// Actualizala después del primer deploy a Railway.
