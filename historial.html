@@ -284,6 +284,7 @@ Calcular
   let allBrechaData = []; // [{date: 'YYYY-MM-DD', brecha: N}]
   let activeFilter = 'max';
   let blueByDate = {};   // 'YYYY-MM-DD' → venta rate (for calculadora)
+  let btcPriceByDate = {}; // 'YYYY-MM-DD' → BTC USD price (pre-fetched 365d)
 
   function setEl(id, text) {
     const el = document.getElementById(id);
@@ -431,14 +432,16 @@ Calcular
       // Historical blue rate from cached evolution data
       const historicalBlue = blueByDate[dateVal] || findClosestDate(blueByDate, dateVal);
 
-      // Historical BTC price
-      const [dd, mm, yyyy] = [dateVal.substring(8, 10), dateVal.substring(5, 7), dateVal.substring(0, 4)];
-      const cgDate = `${dd}-${mm}-${yyyy}`;
-      let btcUsdThen = null;
-      try {
-        const btcResult = await api.getBtcPriceOnDate(cgDate);
-        btcUsdThen = btcResult?.data?.usd || null;
-      } catch { /* CoinGecko history unavailable for this date */ }
+      // Historical BTC price — use pre-fetched 365d map first, API fallback for older dates
+      let btcUsdThen = btcPriceByDate[dateVal] || findClosestDate(btcPriceByDate, dateVal);
+      if (!btcUsdThen) {
+        const [dd, mm, yyyy] = [dateVal.substring(8, 10), dateVal.substring(5, 7), dateVal.substring(0, 4)];
+        const cgDate = `${dd}-${mm}-${yyyy}`;
+        try {
+          const btcResult = await api.getBtcPriceOnDate(cgDate);
+          btcUsdThen = btcResult?.data?.usd || null;
+        } catch { /* CoinGecko history unavailable for this date */ }
+      }
 
       // 1. En pesos (nominal — no change)
       setEl('result-pesos', formatARS(amount));
@@ -485,9 +488,10 @@ Calcular
   async function initHistorial() {
     hideError();
     try {
-      const [dolaresResult, blueHistResult] = await Promise.all([
+      const [dolaresResult, blueHistResult, btcHistResult] = await Promise.all([
         api.getDolares(),
-        api.getBlueHistory()
+        api.getBlueHistory(),
+        api.getBtcHistory(365)
       ]);
       if (dolaresResult.stale) showStale();
 
@@ -505,6 +509,13 @@ Calcular
       if (blueHistResult?.data) {
         allBrechaData = processEvolution(blueHistResult.data);
         setFilterActive('max');
+      }
+
+      if (btcHistResult?.data?.prices) {
+        for (const [ts, price] of btcHistResult.data.prices) {
+          const key = new Date(ts).toISOString().substring(0, 10);
+          btcPriceByDate[key] = price;
+        }
       }
     } catch (err) {
       showError('No se pudo cargar el historial.');
