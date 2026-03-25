@@ -12,7 +12,7 @@ const DFA_API = (function () {
   const TTL = 5 * 60 * 1000; // 5 minutes client-side cache
 
   // ─── Backend URL ──────────────────────────────────────────────────────────
-  const PROD_BACKEND = 'https://YOUR-BACKEND.up.railway.app'; // ← update after deploy
+  const PROD_BACKEND = 'https://finance-dashboard-ar-production.up.railway.app';
 
   const BACKEND_URL = (function () {
     const h = window.location.hostname;
