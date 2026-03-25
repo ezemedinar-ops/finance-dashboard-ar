@@ -217,12 +217,12 @@ async function autoSeed() {
     }
   }
 
-  // Seed BTC prices in background if DB has few rows
+  // Seed BTC prices if DB has few rows — use days=365 (demo key limit)
   const btcCount = getBtcCount();
   if (btcCount < 100) {
-    console.log('[AutoSeed] Seeding BTC prices from CoinGecko (days=max)...');
+    console.log('[AutoSeed] Seeding BTC prices from CoinGecko (days=365)...');
     try {
-      const data = await fetchBtcHistory('max');
+      const data = await fetchBtcHistory(365);
       if (data?.prices) {
         const insert = db.prepare('INSERT OR REPLACE INTO btc_prices (date, price_usd) VALUES (?, ?)');
         const insertMany = db.transaction(rows => {
