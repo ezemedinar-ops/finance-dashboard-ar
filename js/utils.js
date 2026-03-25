@@ -143,6 +143,41 @@ function hideError() {
   if (banner) banner.style.display = 'none';
 }
 
+// ─── CoinGecko Attribution ────────────────────────────────────────────────────
+// Required by CoinGecko API attribution guide: brand.coingecko.com/resources/attribution-guide
+(function injectCoinGeckoAttribution() {
+  document.addEventListener('DOMContentLoaded', () => {
+    const main = document.querySelector('main');
+    if (!main) return;
+
+    const utmLink = 'https://www.coingecko.com?utm_source=finance-dashboard-ar&utm_medium=referral';
+
+    const badge = document.createElement('div');
+    badge.id = 'coingecko-attribution';
+    badge.style.cssText = 'padding: 1.5rem 2rem; border-top: 2px solid #c5c6d2; margin-top: 3rem; display: flex; align-items: center; gap: 0.75rem;';
+    badge.innerHTML = `
+      <span style="font-family: Inter, sans-serif; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.15em; color: #757682;">
+        Precio y datos de mercado
+      </span>
+      <a href="${utmLink}" target="_blank" rel="noopener noreferrer"
+         style="display: inline-flex; align-items: center; gap: 0.4rem; text-decoration: none; border: 1.5px solid #c5c6d2; padding: 0.3rem 0.75rem;">
+        <img
+          src="https://static.coingecko.com/s/coingecko-logo-5683263fd3ea8a4f152dd5f7299acfc5f84ee73955428acff22913b8e59e6c54.svg"
+          alt="CoinGecko"
+          height="16"
+          onerror="this.style.display='none'"
+          style="display: block; height: 16px; width: auto;"
+        />
+        <span style="font-family: Inter, sans-serif; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: #330001;">
+          CoinGecko
+        </span>
+      </a>
+    `;
+
+    main.appendChild(badge);
+  });
+})();
+
 // ─── Exports (global for non-module use) ────────────────────────────────────
 window.DFA = window.DFA || {};
 Object.assign(window.DFA, {
