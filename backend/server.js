@@ -12,7 +12,8 @@ import {
   fetchBtcHistory, fetchFearGreed, fetchBlueHistory
 } from './fetchers.js';
 import {
-  getBtcPriceOnDate, getBlueHistory, getOficialHistory, getBtcCount
+  getBtcPriceOnDate, getBlueHistory, getOficialHistory, getBtcCount,
+  upsertBtcPrice, upsertBlueRate, upsertOficialRate, getDb
 } from './db.js';
 
 const app = express();
@@ -140,20 +141,29 @@ app.get('/api/fng', async (req, res) => {
   }
 });
 
-// Blue dollar history — from DB (+ Bluelytics fallback)
+// Blue + Oficial dollar history — from DB (+ Bluelytics fallback)
 app.get('/api/blue-history', async (req, res) => {
   try {
-    // Serve from DB if we have data
-    const rows = getBlueHistory();
-    if (rows.length > 0) {
-      // Return in same shape as Bluelytics for frontend compatibility
-      const formatted = rows.map(r => ({
-        source: 'Blue',
-        date: r.date,
-        value_avg: ((r.compra || 0) + r.venta) / 2,
-        value_sell: r.venta,
-        value_buy: r.compra
-      }));
+    const blueRows = getBlueHistory();
+    const oficialRows = getOficialHistory();
+
+    // If DB has substantial data, serve from DB
+    if (blueRows.length > 30) {
+      const formatted = [];
+      for (const r of blueRows) {
+        formatted.push({
+          source: 'Blue', date: r.date,
+          value_avg: ((r.compra || 0) + r.venta) / 2,
+          value_sell: r.venta, value_buy: r.compra
+        });
+      }
+      for (const r of oficialRows) {
+        formatted.push({
+          source: 'Oficial', date: r.date,
+          value_avg: ((r.compra || 0) + r.venta) / 2,
+          value_sell: r.venta, value_buy: r.compra
+        });
+      }
       return res.json(formatted);
     }
 
@@ -171,9 +181,66 @@ app.get('/api/oficial-history', (req, res) => {
   res.json(rows);
 });
 
+// ─── Auto-seed on first deploy ────────────────────────────────────────────────
+
+async function autoSeed() {
+  const db = getDb();
+  const blueCount = db.prepare('SELECT COUNT(*) as n FROM blue_rates').get().n;
+
+  // Seed Bluelytics data if DB is nearly empty
+  if (blueCount < 30) {
+    console.log('[AutoSeed] DB has few rows — seeding from Bluelytics...');
+    try {
+      const evolution = await fetchBlueHistory();
+      if (Array.isArray(evolution)) {
+        const byDate = {};
+        for (const item of evolution) {
+          const d = item.date?.substring(0, 10);
+          if (!d) continue;
+          if (!byDate[d]) byDate[d] = {};
+          if (item.source === 'Blue')    byDate[d].blue = item;
+          if (item.source === 'Oficial') byDate[d].oficial = item;
+        }
+        for (const [date, { blue, oficial }] of Object.entries(byDate)) {
+          if (blue)    upsertBlueRate(date, blue.value_buy ?? null, blue.value_sell);
+          if (oficial) upsertOficialRate(date, oficial.value_buy ?? null, oficial.value_sell);
+        }
+        const newBlue = db.prepare('SELECT COUNT(*) as n FROM blue_rates').get().n;
+        const newOficial = db.prepare('SELECT COUNT(*) as n FROM oficial_rates').get().n;
+        console.log(`[AutoSeed] Bluelytics done: ${newBlue} blue, ${newOficial} oficial rows`);
+      }
+    } catch (err) {
+      console.error('[AutoSeed] Bluelytics seed failed:', err.message);
+    }
+  }
+
+  // Seed BTC prices in background if DB has few rows
+  const btcCount = getBtcCount();
+  if (btcCount < 100) {
+    console.log('[AutoSeed] Seeding BTC prices from CoinGecko (days=max)...');
+    try {
+      const data = await fetchBtcHistory('max');
+      if (data?.prices) {
+        const insert = db.prepare('INSERT OR REPLACE INTO btc_prices (date, price_usd) VALUES (?, ?)');
+        const insertMany = db.transaction(rows => {
+          for (const [ts, price] of rows) {
+            const date = new Date(ts).toISOString().substring(0, 10);
+            insert.run(date, price);
+          }
+        });
+        insertMany(data.prices);
+        console.log(`[AutoSeed] BTC done: ${getBtcCount()} rows`);
+      }
+    } catch (err) {
+      console.error('[AutoSeed] BTC seed failed:', err.message);
+    }
+  }
+}
+
 // ─── Start ────────────────────────────────────────────────────────────────────
 
 app.listen(PORT, () => {
   console.log(`[DFA Backend] Running on port ${PORT}`);
   startCron();
+  autoSeed(); // runs in background, doesn't block server
 });
