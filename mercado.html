@@ -5,6 +5,7 @@
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>DÓLAR+CRYPTO | Mercado</title>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
 <script id="tailwind-config">
@@ -536,8 +537,14 @@
       allCoins = marketsResult.data || [];
       setupTableInteractivity();
       applyFiltersAndSort();
-      populateGlobal(globalResult.data);
-      populateFearGreed(fngResult.data, fng30Result.data);
+
+      // Stat cards are non-critical — a chart error must not wipe the table
+      try {
+        populateGlobal(globalResult.data);
+        populateFearGreed(fngResult.data, fng30Result.data);
+      } catch (chartErr) {
+        console.warn('[DFA Mercado] Chart render error:', chartErr);
+      }
 
     } catch (err) {
       showError('No se pudo cargar el mercado crypto.');
