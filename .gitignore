@@ -7,6 +7,9 @@ desktop.ini
 .env
 *.env.local
 
+# Config con keys reales (usar js/config.example.js como template)
+js/config.js
+
 # Editors
 .vscode/
 .idea/

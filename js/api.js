@@ -7,6 +7,20 @@
 const DFA_API = (function () {
   const TTL = 5 * 60 * 1000; // 5 minutes
 
+  // ─── CoinGecko auth header ────────────────────────────────────────────────
+  // Keys starting with "CG-" are Demo keys (x-cg-demo-api-key header)
+  // Pro keys use x-cg-pro-api-key header
+  function cgHeaders() {
+    const key = window.DFA_CONFIG?.COINGECKO_API_KEY;
+    if (!key) return {};
+    const headerName = key.startsWith('CG-') ? 'x-cg-demo-api-key' : 'x-cg-pro-api-key';
+    return { [headerName]: key };
+  }
+
+  function cgFetch(url) {
+    return fetch(url, { headers: cgHeaders() });
+  }
+
   // ─── Cache helpers ──────────────────────────────────────────────────────
   function getCached(key) {
     try {
@@ -38,12 +52,14 @@ const DFA_API = (function () {
   }
 
   // ─── Core fetch with cache ───────────────────────────────────────────────
-  async function fetchWithCache(key, url) {
+  // fetchFn: optional custom fetch function (e.g. cgFetch for CoinGecko auth)
+  async function fetchWithCache(key, url, fetchFn) {
     const cached = getCached(key);
     if (cached) return { data: cached, fromCache: true, stale: false };
 
+    const doFetch = fetchFn || fetch;
     try {
-      const res = await fetch(url);
+      const res = await doFetch(url);
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const data = await res.json();
       setCache(key, data);
@@ -82,7 +98,8 @@ const DFA_API = (function () {
   async function getCryptoPrice() {
     return fetchWithCache(
       'dfa_crypto_price',
-      'https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,tether&vs_currencies=usd'
+      'https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,tether&vs_currencies=usd',
+      cgFetch
     );
   }
 
@@ -93,7 +110,8 @@ const DFA_API = (function () {
   async function getCryptoMarkets() {
     return fetchWithCache(
       'dfa_markets',
-      'https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=20&page=1&sparkline=false&price_change_percentage=24h'
+      'https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=20&page=1&sparkline=false&price_change_percentage=24h',
+      cgFetch
     );
   }
 
@@ -104,7 +122,8 @@ const DFA_API = (function () {
   async function getCoinGeckoGlobal() {
     return fetchWithCache(
       'dfa_global',
-      'https://api.coingecko.com/api/v3/global'
+      'https://api.coingecko.com/api/v3/global',
+      cgFetch
     );
   }
 
@@ -117,7 +136,8 @@ const DFA_API = (function () {
     const key = `dfa_history_${days}d`;
     return fetchWithCache(
       key,
-      `https://api.coingecko.com/api/v3/coins/bitcoin/market_chart?vs_currency=usd&days=${days}&interval=daily`
+      `https://api.coingecko.com/api/v3/coins/bitcoin/market_chart?vs_currency=usd&days=${days}&interval=daily`,
+      cgFetch
     );
   }
 
