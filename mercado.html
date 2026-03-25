@@ -136,7 +136,7 @@
 </aside>
 
 <!-- Main Content -->
-<main class="flex-1 bg-surface-container-low min-h-screen p-6 md:p-12">
+<main class="flex-1 min-w-0 bg-surface-container-low min-h-screen p-6 md:p-12">
 <!-- Hero Header -->
 <header class="mb-12">
 <div class="flex flex-col md:flex-row md:items-end justify-between gap-6">
@@ -158,12 +158,12 @@
 <table class="w-full text-left border-collapse">
 <thead>
 <tr class="border-b-4 border-primary">
-<th class="p-6 text-[10px] font-black uppercase tracking-widest text-primary">#</th>
-<th class="p-6 text-[10px] font-black uppercase tracking-widest text-primary">Activo</th>
-<th class="p-6 text-[10px] font-black uppercase tracking-widest text-primary text-right">Precio USD</th>
-<th class="p-6 text-[10px] font-black uppercase tracking-widest text-primary text-right">Precio ARS (Blue)</th>
-<th class="p-6 text-[10px] font-black uppercase tracking-widest text-primary text-right">Var. 24h</th>
-<th class="p-6 text-[10px] font-black uppercase tracking-widest text-primary text-right hidden lg:table-cell">Market Cap</th>
+<th class="p-3 md:p-6 text-[10px] font-black uppercase tracking-widest text-primary">#</th>
+<th class="p-3 md:p-6 text-[10px] font-black uppercase tracking-widest text-primary">Activo</th>
+<th class="p-3 md:p-6 text-[10px] font-black uppercase tracking-widest text-primary text-right">Precio USD</th>
+<th class="p-3 md:p-6 text-[10px] font-black uppercase tracking-widest text-primary text-right hidden sm:table-cell">ARS (Blue)</th>
+<th class="p-3 md:p-6 text-[10px] font-black uppercase tracking-widest text-primary text-right">Var. 24h</th>
+<th class="p-3 md:p-6 text-[10px] font-black uppercase tracking-widest text-primary text-right hidden lg:table-cell">Market Cap</th>
 </tr>
 </thead>
 <tbody id="crypto-table-body" class="divide-y-4 divide-surface-container">
@@ -256,25 +256,25 @@
     });
 
     return `<tr class="hover:bg-surface-container-high transition-colors group">
-      <td class="p-6 font-black text-outline">${String(index + 1).padStart(2, '0')}</td>
-      <td class="p-6">
-        <div class="flex items-center gap-4">
-          <div class="w-10 h-10 bg-primary flex items-center justify-center text-white font-black text-[10px]">${ticker}</div>
+      <td class="p-3 md:p-6 font-black text-outline">${String(index + 1).padStart(2, '0')}</td>
+      <td class="p-3 md:p-6">
+        <div class="flex items-center gap-3">
+          <div class="w-8 h-8 md:w-10 md:h-10 bg-primary flex items-center justify-center text-white font-black text-[9px] md:text-[10px] shrink-0">${ticker}</div>
           <div>
-            <div class="font-black text-lg uppercase tracking-tight">${escapeHtml(coin.name)}</div>
+            <div class="font-black text-sm md:text-lg uppercase tracking-tight">${escapeHtml(coin.name)}</div>
             <div class="text-[10px] font-bold text-outline tracking-widest">${ticker}/USD</div>
           </div>
         </div>
       </td>
-      <td class="p-6 text-right font-black text-xl tracking-tighter">${usdFormatted}</td>
-      <td class="p-6 text-right font-bold text-secondary tracking-tighter">${formatARS(arsPrice)}</td>
-      <td class="p-6 text-right">
+      <td class="p-3 md:p-6 text-right font-black text-base md:text-xl tracking-tighter">${usdFormatted}</td>
+      <td class="p-3 md:p-6 text-right font-bold text-secondary tracking-tighter hidden sm:table-cell">${formatARS(arsPrice)}</td>
+      <td class="p-3 md:p-6 text-right">
         <div class="inline-flex items-center gap-1 font-black ${colorClass}">
           <span class="material-symbols-outlined text-sm">${icon}</span>
           <span>${Math.abs(change).toFixed(2)}%</span>
         </div>
       </td>
-      <td class="p-6 text-right hidden lg:table-cell font-medium text-outline">${formatMarketCap(coin.market_cap)}</td>
+      <td class="p-3 md:p-6 text-right hidden lg:table-cell font-medium text-outline">${formatMarketCap(coin.market_cap)}</td>
     </tr>`;
   }
 
