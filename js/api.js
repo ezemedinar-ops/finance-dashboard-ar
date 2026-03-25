@@ -173,6 +173,19 @@ const DFA_API = (function () {
     );
   }
 
+  /**
+   * CoinGecko — BTC price on a specific historical date
+   * date: DD-MM-YYYY format
+   * Returns { market_data: { current_price: { usd } } }
+   */
+  async function getBtcHistoryByDate(date) {
+    return fetchWithCache(
+      `dfa_btc_date_${date}`,
+      `https://api.coingecko.com/api/v3/coins/bitcoin/history?date=${date}&localization=false`,
+      cgFetch
+    );
+  }
+
   // ─── Cache management ────────────────────────────────────────────────────
   function clearDolares() { clearCache('dfa_dolares'); }
   function clearBtcHistory(days) { clearCache(`dfa_history_${days}d`); }
@@ -188,6 +201,7 @@ const DFA_API = (function () {
     getCryptoMarkets,
     getCoinGeckoGlobal,
     getBtcHistory,
+    getBtcHistoryByDate,
     getBlueHistory,
     getFearGreed,
     clearDolares,

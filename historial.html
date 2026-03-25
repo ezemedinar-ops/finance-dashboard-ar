@@ -145,95 +145,101 @@
 
 <!-- Page Header -->
 <section class="mb-12">
-<h1 class="text-6xl md:text-8xl font-black tracking-tighter text-primary uppercase leading-none mb-4">Evolución<br/>Histórica</h1>
-<p class="text-outline font-bold uppercase tracking-[0.2em] text-sm">Análisis de activos y métricas de mercado</p>
+<span class="inline-block bg-primary text-white px-3 py-1 text-[10px] font-bold tracking-widest uppercase mb-4">Mercado Argentino</span>
+<h1 class="text-6xl md:text-8xl font-black tracking-tighter text-primary uppercase leading-none mb-4">Brecha<br/>Cambiaria</h1>
+<p class="text-outline font-bold uppercase tracking-[0.2em] text-sm">Evolución histórica del dólar blue vs. oficial</p>
 </section>
 
-<!-- Metrics Grid -->
-<section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-0 mb-12 border-4 border-[#330001]">
-<div class="bg-surface p-8 border-b-4 md:border-b-0 md:border-r-4 border-[#330001]">
-<p class="font-bold uppercase tracking-[0.15em] text-outline text-[11px] mb-6">Riesgo País</p>
-<div class="flex items-baseline space-x-2">
-<span class="text-5xl font-black tracking-tighter">1.452</span>
-<span class="text-error font-bold text-lg">+1.2%</span>
+<!-- Brecha Hero -->
+<section class="grid grid-cols-1 md:grid-cols-3 gap-0 mb-12 border-4 border-[#330001]">
+<div class="bg-primary text-white p-8 md:p-12 md:col-span-2">
+<p class="font-bold uppercase tracking-[0.2em] text-[10px] opacity-60 mb-6">Brecha actual</p>
+<div class="flex items-baseline gap-3">
+<span id="brecha-value" class="text-7xl md:text-9xl font-black tracking-tighter">—</span>
+<span class="text-3xl font-bold opacity-60">%</span>
 </div>
-<p class="text-xs font-bold text-outline-variant mt-2">PUNTOS BÁSICOS (JP MORGAN)</p>
+<p class="text-sm font-bold uppercase tracking-widest opacity-60 mt-3">por encima del dólar oficial</p>
 </div>
-<div class="bg-surface p-8 border-b-4 md:border-b-0 lg:border-r-4 border-[#330001]">
-<p class="font-bold uppercase tracking-[0.15em] text-outline text-[11px] mb-6">Volatilidad 30D BTC</p>
-<div class="flex items-baseline space-x-2">
-<span id="metrics-volatilidad" class="text-5xl font-black tracking-tighter">—</span>
-</div>
-<p class="text-xs font-bold text-outline-variant mt-2">DESVIACIÓN ESTÁNDAR DIARIA</p>
-</div>
-<div class="bg-surface p-8 lg:col-span-1 md:col-span-2">
-<p class="font-bold uppercase tracking-[0.15em] text-outline text-[11px] mb-6">Liquidez de Mercado</p>
-<div class="flex items-baseline space-x-2">
-<span class="text-5xl font-black tracking-tighter">ALTA</span>
-</div>
-<p class="text-xs font-bold text-outline-variant mt-2">RATIO DE VOLUMEN OPERADO</p>
-</div>
-</section>
-
-<!-- Chart Section -->
-<section class="bg-surface-container-low border-4 border-[#330001] p-8 md:p-12">
-<div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-12 space-y-6 md:space-y-0">
+<div class="bg-surface p-8 border-t-4 md:border-t-0 md:border-l-4 border-[#330001]">
+<p class="font-bold uppercase tracking-[0.15em] text-outline text-[11px] mb-6">Cotizaciones actuales</p>
+<div class="space-y-6">
 <div>
-<h3 class="text-3xl font-black uppercase tracking-tight">Evolución de Activos</h3>
-<div id="chart-legend" class="flex items-center space-x-6 mt-2">
-<div class="flex items-center space-x-2">
-<div class="w-3 h-3 bg-[#330001]"></div>
-<span class="text-xs font-bold uppercase tracking-wider">Dólar Blue</span>
+<p class="text-[10px] font-bold uppercase tracking-widest text-outline mb-1">Oficial</p>
+<p id="oficial-rate" class="text-3xl font-black tracking-tighter text-primary">—</p>
 </div>
-<div class="flex items-center space-x-2">
-<div class="w-3 h-3 bg-secondary"></div>
-<span class="text-xs font-bold uppercase tracking-wider">Bitcoin (USD)</span>
+<div>
+<p class="text-[10px] font-bold uppercase tracking-widest text-outline mb-1">Blue</p>
+<p id="blue-rate" class="text-3xl font-black tracking-tighter text-secondary">—</p>
 </div>
 </div>
 </div>
-<!-- Time Filters -->
+</section>
+
+<!-- Brecha Chart -->
+<section class="bg-surface-container-low border-4 border-[#330001] p-8 md:p-12 mb-12">
+<div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-12 gap-6">
+<div>
+<h3 class="text-3xl font-black uppercase tracking-tight">Evolución de la Brecha</h3>
+<p class="text-[10px] font-bold uppercase tracking-widest text-outline mt-1">Diferencia % entre blue y oficial</p>
+</div>
 <div class="flex bg-[#330001] p-1">
-<button id="filter-7d"  class="px-6 py-2 font-black text-sm uppercase tracking-widest filter-btn-active">7D</button>
 <button id="filter-30d" class="px-6 py-2 font-bold text-sm uppercase tracking-widest filter-btn-inactive">30D</button>
 <button id="filter-90d" class="px-6 py-2 font-bold text-sm uppercase tracking-widest filter-btn-inactive">90D</button>
+<button id="filter-1y"  class="px-6 py-2 font-bold text-sm uppercase tracking-widest filter-btn-inactive">1A</button>
+<button id="filter-max" class="px-6 py-2 font-black text-sm uppercase tracking-widest filter-btn-active">MAX</button>
 </div>
 </div>
-
-<!-- Chart Canvas -->
-<div class="relative w-full bg-white border-2 border-[#757682]/20 p-4" style="height:400px">
-<canvas id="history-chart"></canvas>
+<div class="relative w-full bg-white p-4" style="height:400px">
+<canvas id="brecha-chart"></canvas>
 </div>
 </section>
 
-<!-- Data Table / Details -->
-<section class="mt-12">
-<div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+<!-- Calculadora -->
+<section class="border-4 border-[#330001]">
+<div class="bg-primary text-white p-8 md:p-12 border-b-4 border-[#330001]">
+<span class="inline-block border border-white/30 px-3 py-1 text-[10px] font-bold tracking-widest uppercase mb-4 opacity-60">Herramienta</span>
+<h2 class="text-4xl md:text-6xl font-black tracking-tighter uppercase leading-none">¿Qué pasó<br/>con tu plata?</h2>
+<p class="font-bold uppercase tracking-[0.15em] text-xs mt-4 opacity-60">Ingresá un monto en pesos y una fecha — calculamos cuánto tendrías hoy</p>
+</div>
+<div class="bg-surface-container-lowest p-8 md:p-12">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-10">
 <div>
-<h4 class="text-xl font-black uppercase tracking-tighter mb-6 border-b-4 border-primary inline-block">Hitos Mensuales</h4>
-<div class="space-y-6">
-<div class="flex justify-between items-center p-4 bg-white border-l-8 border-primary">
+<label class="block font-bold uppercase tracking-[0.15em] text-[12px] text-outline mb-4">Monto en pesos</label>
+<div class="relative">
+<span class="absolute left-0 bottom-3 text-3xl font-black text-primary select-none">$</span>
+<input id="calc-amount" type="number" min="1" placeholder="100000"
+  class="w-full bg-transparent border-b-2 border-outline focus:border-primary outline-none py-3 pl-10 text-5xl font-black tracking-tighter text-on-background transition-all placeholder:opacity-20"/>
+</div>
+</div>
 <div>
-<p class="text-xs font-bold text-outline uppercase tracking-widest">12 JUN 2024</p>
-<p class="font-black text-primary uppercase">Máximo Histórico BTC</p>
-</div>
-<span class="text-xl font-black tracking-tighter">$69,420</span>
-</div>
-<div class="flex justify-between items-center p-4 bg-white border-l-8 border-secondary">
-<div>
-<p class="text-xs font-bold text-outline uppercase tracking-widest">05 JUN 2024</p>
-<p class="font-black text-primary uppercase">Intervención BCRA</p>
-</div>
-<span class="text-xl font-black tracking-tighter">-$240M</span>
+<label class="block font-bold uppercase tracking-[0.15em] text-[12px] text-outline mb-4">Fecha de entonces</label>
+<input id="calc-date" type="date"
+  class="w-full bg-transparent border-b-2 border-outline focus:border-primary outline-none py-3 text-2xl font-black tracking-tighter text-on-background transition-all"/>
 </div>
 </div>
+<button id="calc-btn" class="h-14 px-12 bg-primary text-white font-black uppercase tracking-widest text-sm hover:bg-[#5a0002] transition-colors active:scale-95 duration-100">
+Calcular
+</button>
+<div id="calc-results" class="hidden mt-12">
+<p class="font-bold uppercase tracking-[0.2em] text-[10px] text-outline mb-6">Con ese monto en esa fecha, hoy tendrías:</p>
+<div class="grid grid-cols-1 md:grid-cols-3 border-4 border-[#330001]">
+<div class="bg-surface p-8 border-b-4 md:border-b-0 md:border-r-4 border-[#330001]">
+<p class="font-bold uppercase tracking-[0.2em] text-[10px] text-outline mb-2">En pesos (guardado)</p>
+<p id="result-pesos" class="text-3xl font-black tracking-tighter text-primary mt-4">—</p>
+<p id="result-pesos-note" class="text-[10px] font-bold text-outline uppercase tracking-widest mt-2">—</p>
 </div>
-<div class="bg-primary text-white p-10 flex flex-col justify-center">
-<span class="material-symbols-outlined text-5xl mb-6">warning</span>
-<h4 class="text-3xl font-black uppercase leading-tight mb-4">Nota de Riesgo</h4>
-<p class="text-sm font-bold uppercase tracking-wide opacity-80 leading-relaxed">
-  Los datos históricos presentados están sujetos a rectificación oficial por los entes reguladores. La volatilidad implícita sugiere un escenario de alta incertidumbre para el próximo trimestre contable.
-</p>
-<button class="mt-8 self-start px-8 py-4 bg-white text-primary font-black uppercase tracking-widest hover:bg-tertiary-fixed hover:text-[#330001] transition-none">Descargar PDF</button>
+<div class="bg-surface p-8 border-b-4 md:border-b-0 md:border-r-4 border-[#330001]">
+<p class="font-bold uppercase tracking-[0.2em] text-[10px] text-outline mb-2">Convertido a blue</p>
+<p id="result-blue" class="text-3xl font-black tracking-tighter text-secondary mt-4">—</p>
+<p id="result-blue-note" class="text-[10px] font-bold text-outline uppercase tracking-widest mt-2">—</p>
+</div>
+<div class="bg-primary text-white p-8">
+<p class="font-bold uppercase tracking-[0.2em] text-[10px] opacity-60 mb-2">Invertido en Bitcoin</p>
+<p id="result-btc" class="text-3xl font-black tracking-tighter mt-4">—</p>
+<p id="result-btc-note" class="text-[10px] font-bold opacity-60 uppercase tracking-widest mt-2">—</p>
+</div>
+</div>
+<div id="calc-error" class="hidden mt-4 p-4 border-l-4 border-error bg-error-container text-on-error-container font-bold text-sm uppercase tracking-widest"></div>
 </div>
 </div>
 </section>
@@ -274,127 +280,75 @@
 
 <script>
 (function () {
-  const { showError, showStale, hideError } = window.DFA;
+  const { formatARS, formatUSD, formatBTC, showError, showStale, hideError } = window.DFA;
   const api = window.DFA_API;
 
-  let historialChart = null;
-  let activeDays = 7;
-  let currentBlueRate = 1;
+  let brechaChart = null;
+  let allBrechaData = []; // [{date: 'YYYY-MM-DD', brecha: N}]
+  let activeFilter = 'max';
+  let blueByDate = {};   // 'YYYY-MM-DD' → venta rate (for calculadora)
 
-  // ─── Calculate 30D volatility from price array ───────────────────────────
-  function calcVolatility(prices) {
-    if (!prices || prices.length < 2) return null;
-    const values = prices.map(([, p]) => p);
-    const returns = [];
-    for (let i = 1; i < values.length; i++) {
-      returns.push(Math.log(values[i] / values[i - 1]));
-    }
-    const mean = returns.reduce((a, b) => a + b, 0) / returns.length;
-    const variance = returns.reduce((a, b) => a + Math.pow(b - mean, 2), 0) / returns.length;
-    return Math.sqrt(variance) * 100;
+  function setEl(id, text) {
+    const el = document.getElementById(id);
+    if (el) el.textContent = text;
   }
 
-  // ─── Format date label ────────────────────────────────────────────────────
-  function formatDateLabel(ts) {
-    return new Date(ts).toLocaleDateString('es-AR', { day: '2-digit', month: 'short' });
+  // ─── Process evolution.json → brecha array ────────────────────────────────
+  function processEvolution(rawData) {
+    if (!rawData || !Array.isArray(rawData)) return [];
+    const byDate = {};
+    for (const item of rawData) {
+      const d = item.date ? String(item.date).substring(0, 10) : null;
+      if (!d) continue;
+      if (!byDate[d]) byDate[d] = {};
+      const val = item.value_sell || item.value_buy || 0;
+      if (item.source === 'Blue')   { byDate[d].blue   = val; blueByDate[d] = val; }
+      if (item.source === 'Oficial') byDate[d].oficial = val;
+    }
+    const result = [];
+    for (const [date, rates] of Object.entries(byDate)) {
+      if (rates.blue && rates.oficial && rates.oficial > 0) {
+        result.push({ date, brecha: ((rates.blue - rates.oficial) / rates.oficial) * 100 });
+      }
+    }
+    result.sort((a, b) => a.date.localeCompare(b.date));
+    return result;
   }
 
-  // ─── Render or update chart ───────────────────────────────────────────────
-  function renderChart(btcPrices, blueHistoryData) {
-    const canvas = document.getElementById('history-chart');
-    if (!canvas || !btcPrices || btcPrices.length < 2) return;
+  // ─── Filter brecha data by day range ─────────────────────────────────────
+  function filterByDays(data, days) {
+    if (!days || days === 'max') return data;
+    const cutoff = new Date();
+    cutoff.setDate(cutoff.getDate() - days);
+    const cutoffStr = cutoff.toISOString().substring(0, 10);
+    return data.filter(d => d.date >= cutoffStr);
+  }
 
-    const labels = btcPrices.map(([ts]) => formatDateLabel(ts));
-    const btcValues = btcPrices.map(([, p]) => p);
-
-    let datasets;
-    let legendHtml;
-
-    // Filter only Blue entries (array contains both "Oficial" and "Blue" sources)
-    const blueOnly = blueHistoryData
-      ? blueHistoryData.filter(item => item.source === 'Blue')
-      : [];
-
-    if (blueOnly.length > 0) {
-      // Bluelytics returns newest-first; reverse to chronological
-      const blueReversed = [...blueOnly].reverse();
-
-      // Sample to match BTC data points
-      const blueValues = sampleToLength(blueReversed, btcPrices.length);
-
-      datasets = [
-        {
-          label: 'Dólar Blue (ARS)',
-          data: blueValues,
-          borderColor: '#330001',
-          borderWidth: 3,
-          fill: false,
-          pointRadius: 2,
-          tension: 0,
-          yAxisID: 'yLeft'
-        },
-        {
-          label: 'Bitcoin (USD)',
-          data: btcValues,
-          borderColor: '#1659c2',
-          borderWidth: 3,
-          fill: false,
-          pointRadius: 2,
-          tension: 0,
-          yAxisID: 'yRight'
-        }
-      ];
-
-      legendHtml = `
-        <div class="flex items-center space-x-2"><div class="w-3 h-3 bg-[#330001]"></div><span class="text-xs font-bold uppercase tracking-wider">Dólar Blue</span></div>
-        <div class="flex items-center space-x-2"><div class="w-3 h-3 bg-secondary"></div><span class="text-xs font-bold uppercase tracking-wider">Bitcoin (USD)</span></div>
-      `;
-    } else {
-      // Fallback: show BTC in ARS (left) and BTC in USD (right)
-      const btcArsValues = btcValues.map(p => p * currentBlueRate);
-
-      datasets = [
-        {
-          label: 'BTC en ARS',
-          data: btcArsValues,
-          borderColor: '#330001',
-          borderWidth: 3,
-          fill: false,
-          pointRadius: 2,
-          tension: 0,
-          yAxisID: 'yLeft'
-        },
-        {
-          label: 'BTC en USD',
-          data: btcValues,
-          borderColor: '#1659c2',
-          borderWidth: 3,
-          fill: false,
-          pointRadius: 2,
-          tension: 0,
-          yAxisID: 'yRight'
-        }
-      ];
-
-      legendHtml = `
-        <div class="flex items-center space-x-2"><div class="w-3 h-3 bg-[#330001]"></div><span class="text-xs font-bold uppercase tracking-wider">BTC en ARS</span></div>
-        <div class="flex items-center space-x-2"><div class="w-3 h-3 bg-secondary"></div><span class="text-xs font-bold uppercase tracking-wider">BTC en USD</span></div>
-      `;
-    }
-
-    // Update legend
-    const legendEl = document.getElementById('chart-legend');
-    if (legendEl) legendEl.innerHTML = legendHtml;
-
-    // Destroy previous chart
-    if (historialChart) {
-      historialChart.destroy();
-      historialChart = null;
-    }
-
-    historialChart = new Chart(canvas, {
+  // ─── Render brecha chart ──────────────────────────────────────────────────
+  function renderBrechaChart(data) {
+    const canvas = document.getElementById('brecha-chart');
+    if (!canvas || data.length < 2) return;
+    const labels = data.map(d => {
+      const [y, m, day] = d.date.split('-');
+      return `${day}/${m}/${y.substring(2)}`;
+    });
+    const values = data.map(d => d.brecha);
+    if (brechaChart) { brechaChart.destroy(); brechaChart = null; }
+    brechaChart = new Chart(canvas, {
       type: 'line',
-      data: { labels, datasets },
+      data: {
+        labels,
+        datasets: [{
+          label: 'Brecha cambiaria',
+          data: values,
+          borderColor: '#330001',
+          borderWidth: 2,
+          fill: true,
+          backgroundColor: 'rgba(51,0,1,0.07)',
+          pointRadius: 0,
+          tension: 0
+        }]
+      },
       options: {
         responsive: true,
         maintainAspectRatio: false,
@@ -403,14 +357,7 @@
           legend: { display: false },
           tooltip: {
             callbacks: {
-              label: function(ctx) {
-                const val = ctx.parsed.y;
-                if (ctx.datasetIndex === 0) {
-                  return ctx.dataset.label + ': $' + val.toLocaleString('es-AR', { maximumFractionDigits: 0 });
-                } else {
-                  return ctx.dataset.label + ': u$s ' + val.toLocaleString('en-US', { maximumFractionDigits: 0 });
-                }
-              }
+              label: ctx => ' Brecha: ' + ctx.parsed.y.toFixed(1) + '%'
             }
           }
         },
@@ -419,154 +366,172 @@
             ticks: {
               font: { family: 'Inter', weight: '700', size: 10 },
               color: '#757682',
-              maxTicksLimit: activeDays <= 7 ? 7 : (activeDays <= 30 ? 8 : 10)
+              maxTicksLimit: 9
             },
             grid: { color: 'rgba(117,118,130,0.1)' }
           },
-          yLeft: {
-            type: 'linear',
-            position: 'left',
+          y: {
             ticks: {
               font: { family: 'Inter', weight: '700', size: 10 },
               color: '#330001',
-              callback: v => '$' + Math.round(v).toLocaleString('es-AR')
+              callback: v => Math.round(v) + '%'
             },
             grid: { color: 'rgba(117,118,130,0.08)' }
-          },
-          yRight: {
-            type: 'linear',
-            position: 'right',
-            ticks: {
-              font: { family: 'Inter', weight: '700', size: 10 },
-              color: '#1659c2',
-              callback: v => 'u$s ' + Math.round(v).toLocaleString('en-US')
-            },
-            grid: { drawOnChartArea: false }
           }
         }
       }
     });
   }
 
-  // Helper: evenly sample array to target length
-  function sampleToLength(arr, targetLen) {
-    if (!arr || arr.length === 0) return [];
-    if (arr.length <= targetLen) return arr.map(item => item.value_sell || item.value_buy || 0);
-    const result = [];
-    for (let i = 0; i < targetLen; i++) {
-      const idx = Math.round(i * (arr.length - 1) / (targetLen - 1));
-      const item = arr[idx];
-      result.push(item.value_sell || item.value_buy || 0);
-    }
-    return result;
+  // ─── Set filter button active + re-render ────────────────────────────────
+  function setFilterActive(filter) {
+    activeFilter = filter;
+    const map = { '30d': 30, '90d': 90, '1y': 365, 'max': 'max' };
+    ['30d', '90d', '1y', 'max'].forEach(id => {
+      const btn = document.getElementById('filter-' + id);
+      if (!btn) return;
+      const isActive = id === filter;
+      btn.className = 'px-6 py-2 text-sm uppercase tracking-widest ' +
+        (isActive ? 'font-black filter-btn-active' : 'font-bold filter-btn-inactive');
+    });
+    renderBrechaChart(filterByDays(allBrechaData, map[filter]));
   }
 
-  // ─── Load chart data for given days ──────────────────────────────────────
-  async function loadChart(days) {
-    setFilterActive(days);
+  // ─── Find closest past date in a {YYYY-MM-DD → value} map ────────────────
+  function findClosestDate(map, target) {
+    const dates = Object.keys(map).sort();
+    let closest = null;
+    for (const d of dates) {
+      if (d <= target) closest = d;
+      else break;
+    }
+    return closest ? map[closest] : null;
+  }
+
+  // ─── Calculadora ──────────────────────────────────────────────────────────
+  async function runCalculadora() {
+    const amount = parseFloat(document.getElementById('calc-amount')?.value);
+    const dateVal = document.getElementById('calc-date')?.value; // YYYY-MM-DD
+    if (!amount || amount <= 0 || !dateVal) return;
+
+    const btn = document.getElementById('calc-btn');
+    const resultsEl = document.getElementById('calc-results');
+    const errorEl = document.getElementById('calc-error');
+    if (btn) { btn.disabled = true; btn.textContent = 'Calculando...'; }
+    if (errorEl) errorEl.classList.add('hidden');
+    if (resultsEl) resultsEl.classList.add('hidden');
 
     try {
-      const [btcResult, blueResult] = await Promise.all([
-        api.getBtcHistory(days),
-        days === 7 ? api.getBlueHistory() : Promise.resolve(null) // Only fetch bluelytics once (7d default)
+      // Current rates (likely cached)
+      const [dolaresResult, cryptoResult] = await Promise.all([
+        api.getDolares(),
+        api.getCryptoPrice()
       ]);
+      const blueNow   = dolaresResult.byKey['blue']?.venta || 0;
+      const btcUsdNow = cryptoResult.data?.bitcoin?.usd    || 0;
+      if (!blueNow) throw new Error('No se pudo obtener el dólar blue actual.');
 
-      if (btcResult.stale) showStale();
+      // Historical blue rate from cached evolution data
+      const historicalBlue = blueByDate[dateVal] || findClosestDate(blueByDate, dateVal);
 
-      const btcPrices = btcResult.data?.prices;
+      // Historical BTC price
+      const [dd, mm, yyyy] = [dateVal.substring(8, 10), dateVal.substring(5, 7), dateVal.substring(0, 4)];
+      const cgDate = `${dd}-${mm}-${yyyy}`;
+      let btcUsdThen = null;
+      try {
+        const btcResult = await api.getBtcHistoryByDate(cgDate);
+        btcUsdThen = btcResult?.data?.market_data?.current_price?.usd || null;
+      } catch { /* CoinGecko history unavailable for this date */ }
 
-      // For 30D/90D, try to use already-cached blue history
-      let blueData = null;
-      if (blueResult && blueResult.data) {
-        blueData = blueResult.data;
+      // 1. En pesos (nominal — no change)
+      setEl('result-pesos', formatARS(amount));
+      setEl('result-pesos-note', 'El mismo monto nominal en pesos');
+
+      // 2. Al blue
+      if (historicalBlue && blueNow) {
+        const usdBought = amount / historicalBlue;
+        setEl('result-blue', formatARS(usdBought * blueNow));
+        setEl('result-blue-note', formatUSD(usdBought) + ' al blue de $' + Math.round(historicalBlue).toLocaleString('es-AR'));
       } else {
-        // Try cached blue history
-        try {
-          const cached = sessionStorage.getItem('dfa_blue_history');
-          if (cached) {
-            const parsed = JSON.parse(cached);
-            blueData = parsed.data;
-          }
-        } catch {}
+        setEl('result-blue', 'Sin datos');
+        setEl('result-blue-note', 'No hay datos de blue para esa fecha');
       }
 
-      renderChart(btcPrices, blueData);
-
-      // Update volatility metric if we have 30D data
-      if (days >= 30 && btcPrices) {
-        const vol = calcVolatility(btcPrices);
-        if (vol != null) {
-          const el = document.getElementById('metrics-volatilidad');
-          if (el) el.textContent = vol.toFixed(1) + '%';
-        }
+      // 3. En Bitcoin
+      if (historicalBlue && btcUsdThen && blueNow && btcUsdNow) {
+        const btcBought = (amount / historicalBlue) / btcUsdThen;
+        setEl('result-btc', formatARS(btcBought * btcUsdNow * blueNow));
+        setEl('result-btc-note', formatBTC(btcBought) + ' a u$s ' + Math.round(btcUsdThen).toLocaleString('en-US'));
+      } else if (!btcUsdThen) {
+        setEl('result-btc', 'Sin datos');
+        setEl('result-btc-note', 'Sin precio BTC para esa fecha');
+      } else {
+        setEl('result-btc', 'Sin datos');
+        setEl('result-btc-note', 'No hay datos para esa fecha');
       }
 
+      if (resultsEl) resultsEl.classList.remove('hidden');
+
+    } catch (err) {
+      console.error('[DFA Calculadora]', err);
+      if (errorEl) {
+        errorEl.textContent = err.message || 'Error al calcular. Intentá con otra fecha.';
+        errorEl.classList.remove('hidden');
+      }
+      if (resultsEl) resultsEl.classList.remove('hidden');
+    } finally {
+      if (btn) { btn.disabled = false; btn.textContent = 'Calcular'; }
+    }
+  }
+
+  // ─── Main init ────────────────────────────────────────────────────────────
+  async function initHistorial() {
+    hideError();
+    try {
+      const [dolaresResult, blueHistResult] = await Promise.all([
+        api.getDolares(),
+        api.getBlueHistory()
+      ]);
+      if (dolaresResult.stale) showStale();
+
+      const oficial = dolaresResult.byKey['oficial'];
+      const blue    = dolaresResult.byKey['blue'];
+
+      if (oficial) setEl('oficial-rate', formatARS(oficial.venta));
+      if (blue)    setEl('blue-rate',    formatARS(blue.venta));
+
+      if (oficial && blue && oficial.venta > 0) {
+        const brecha = ((blue.venta - oficial.venta) / oficial.venta) * 100;
+        setEl('brecha-value', Math.round(brecha).toLocaleString('es-AR'));
+      }
+
+      if (blueHistResult?.data) {
+        allBrechaData = processEvolution(blueHistResult.data);
+        setFilterActive('max');
+      }
     } catch (err) {
       showError('No se pudo cargar el historial.');
       console.error('[DFA Historial]', err);
-    } finally {
-      enableFilterButtons();
     }
   }
 
-  // ─── Filter button state ──────────────────────────────────────────────────
-  function setFilterActive(days) {
-    [7, 30, 90].forEach(d => {
-      const btn = document.getElementById(`filter-${d}d`);
-      if (!btn) return;
-      if (d === days) {
-        btn.className = 'px-6 py-2 font-black text-sm uppercase tracking-widest filter-btn-active';
-      } else {
-        btn.className = 'px-6 py-2 font-bold text-sm uppercase tracking-widest filter-btn-inactive';
-      }
-    });
-  }
-
-  function disableFilterButtons() {
-    [7, 30, 90].forEach(d => {
-      const btn = document.getElementById(`filter-${d}d`);
-      if (btn) btn.disabled = true;
-    });
-  }
-
-  function enableFilterButtons() {
-    [7, 30, 90].forEach(d => {
-      const btn = document.getElementById(`filter-${d}d`);
-      if (btn) btn.disabled = false;
-    });
-  }
-
-  // ─── Main init ─────────────────────────────────────────────────────────────
-  async function initHistorial() {
-    hideError();
-
-    try {
-      // Get current blue rate for fallback ARS calculation
-      const dolaresResult = await api.getDolares();
-      if (dolaresResult.stale) showStale();
-      const blue = dolaresResult.byKey['blue'];
-      currentBlueRate = blue?.venta || 1;
-    } catch {}
-
-    await loadChart(7);
-
-    // Preload 30D data in background after initial render
-    setTimeout(() => api.getBtcHistory(30).catch(() => {}), 2000);
-  }
-
-  // ─── Wire filter buttons ───────────────────────────────────────────────────
+  // ─── Wire events ──────────────────────────────────────────────────────────
   document.addEventListener('DOMContentLoaded', () => {
-    [7, 30, 90].forEach(days => {
-      const btn = document.getElementById(`filter-${days}d`);
-      if (!btn) return;
-      btn.addEventListener('click', () => {
-        if (activeDays === days) return;
-        activeDays = days;
-        disableFilterButtons();
-        api.clearBtcHistory(days); // Always fetch fresh on explicit filter click
-        loadChart(days);
-      });
-    });
+    document.getElementById('filter-30d')?.addEventListener('click', () => setFilterActive('30d'));
+    document.getElementById('filter-90d')?.addEventListener('click', () => setFilterActive('90d'));
+    document.getElementById('filter-1y')?.addEventListener('click',  () => setFilterActive('1y'));
+    document.getElementById('filter-max')?.addEventListener('click', () => setFilterActive('max'));
+    document.getElementById('calc-btn')?.addEventListener('click', runCalculadora);
+
+    // Default date: 1 year ago
+    const dateInput = document.getElementById('calc-date');
+    if (dateInput) {
+      const d = new Date();
+      d.setFullYear(d.getFullYear() - 1);
+      dateInput.value = d.toISOString().substring(0, 10);
+      dateInput.max = new Date().toISOString().substring(0, 10);
+      dateInput.min = '2010-01-01';
+    }
 
     initHistorial();
   });
