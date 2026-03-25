@@ -16,5 +16,10 @@ js/config.js
 *.swp
 *.swo
 
-# Node (si se agrega tooling en el futuro)
+# Node
 node_modules/
+
+# Backend
+backend/.env
+backend/data/
+backend/node_modules/

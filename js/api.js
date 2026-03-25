@@ -2,14 +2,27 @@
  * api.js — Argentine Finance Dashboard
  * Fetch wrappers with sessionStorage cache (5-min TTL)
  * Works over file:// — no ES modules, plain globals
+ *
+ * Backend mode: set window.DFA_CONFIG.BACKEND_URL to route all calls
+ * through the backend proxy instead of hitting external APIs directly.
+ * When BACKEND_URL is set, CoinGecko API key is not needed in the frontend.
  */
 
 const DFA_API = (function () {
   const TTL = 5 * 60 * 1000; // 5 minutes
 
+  // ─── Backend URL (optional) ───────────────────────────────────────────────
+  // If set, all API calls go through the backend proxy.
+  function BASE_URL() {
+    return window.DFA_CONFIG?.BACKEND_URL || '';
+  }
+
+  function isBackend() {
+    return !!window.DFA_CONFIG?.BACKEND_URL;
+  }
+
   // ─── CoinGecko auth header ────────────────────────────────────────────────
-  // Keys starting with "CG-" are Demo keys (x-cg-demo-api-key header)
-  // Pro keys use x-cg-pro-api-key header
+  // Only used when hitting CoinGecko directly (no backend configured)
   function cgHeaders() {
     const key = window.DFA_CONFIG?.COINGECKO_API_KEY;
     if (!key) return {};
@@ -79,10 +92,10 @@ const DFA_API = (function () {
    * casa values: "blue", "oficial", "bolsa", "contadoconliqui", "cripto", "tarjeta"
    */
   async function getDolares() {
-    const result = await fetchWithCache(
-      'dfa_dolares',
-      'https://dolarapi.com/v1/dolares'
-    );
+    const url = isBackend()
+      ? `${BASE_URL()}/api/dolares`
+      : 'https://dolarapi.com/v1/dolares';
+    const result = await fetchWithCache('dfa_dolares', url);
     // Index by casa for easy lookup
     const byKey = {};
     for (const item of result.data) {
@@ -96,11 +109,10 @@ const DFA_API = (function () {
    * Returns { bitcoin: { usd }, ethereum: { usd }, tether: { usd } }
    */
   async function getCryptoPrice() {
-    return fetchWithCache(
-      'dfa_crypto_price',
-      'https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,tether&vs_currencies=usd',
-      cgFetch
-    );
+    const url = isBackend()
+      ? `${BASE_URL()}/api/btc-price`
+      : 'https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,tether&vs_currencies=usd';
+    return fetchWithCache('dfa_crypto_price', url, isBackend() ? null : cgFetch);
   }
 
   /**
@@ -108,11 +120,10 @@ const DFA_API = (function () {
    * Returns array of coin objects with current_price, market_cap, price_change_percentage_24h, etc.
    */
   async function getCryptoMarkets() {
-    return fetchWithCache(
-      'dfa_markets',
-      'https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=20&page=1&sparkline=false&price_change_percentage=24h',
-      cgFetch
-    );
+    const url = isBackend()
+      ? `${BASE_URL()}/api/markets`
+      : 'https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=20&page=1&sparkline=false&price_change_percentage=24h';
+    return fetchWithCache('dfa_markets', url, isBackend() ? null : cgFetch);
   }
 
   /**
@@ -120,11 +131,10 @@ const DFA_API = (function () {
    * Returns { data: { market_cap_percentage, total_volume, ... } }
    */
   async function getCoinGeckoGlobal() {
-    return fetchWithCache(
-      'dfa_global',
-      'https://api.coingecko.com/api/v3/global',
-      cgFetch
-    );
+    const url = isBackend()
+      ? `${BASE_URL()}/api/global`
+      : 'https://api.coingecko.com/api/v3/global';
+    return fetchWithCache('dfa_global', url, isBackend() ? null : cgFetch);
   }
 
   /**
@@ -133,12 +143,10 @@ const DFA_API = (function () {
    * Returns { prices: [[timestamp_ms, price], ...] }
    */
   async function getBtcHistory(days) {
-    const key = `dfa_history_${days}d`;
-    return fetchWithCache(
-      key,
-      `https://api.coingecko.com/api/v3/coins/bitcoin/market_chart?vs_currency=usd&days=${days}&interval=daily`,
-      cgFetch
-    );
+    const url = isBackend()
+      ? `${BASE_URL()}/api/btc-history?days=${days}`
+      : `https://api.coingecko.com/api/v3/coins/bitcoin/market_chart?vs_currency=usd&days=${days}&interval=daily`;
+    return fetchWithCache(`dfa_history_${days}d`, url, isBackend() ? null : cgFetch);
   }
 
   /**
@@ -149,6 +157,10 @@ const DFA_API = (function () {
   async function getBlueHistory() {
     const cached = getCached('dfa_blue_history');
     if (cached) return { data: cached, fromCache: true, stale: false };
+
+    if (isBackend()) {
+      return fetchWithCache('dfa_blue_history', `${BASE_URL()}/api/blue-history`);
+    }
 
     try {
       const res = await fetch('https://api.bluelytics.com.ar/v2/evolution.json');
@@ -167,10 +179,10 @@ const DFA_API = (function () {
    * Returns { data: [{ value, value_classification, timestamp }] }
    */
   async function getFearGreed() {
-    return fetchWithCache(
-      'dfa_fng',
-      'https://api.alternative.me/fng/?limit=1'
-    );
+    const url = isBackend()
+      ? `${BASE_URL()}/api/fng?limit=1`
+      : 'https://api.alternative.me/fng/?limit=1';
+    return fetchWithCache('dfa_fng', url);
   }
 
   /**
@@ -178,10 +190,10 @@ const DFA_API = (function () {
    * Returns { data: [{ value, value_classification, timestamp }, ...] }
    */
   async function getFearGreed30() {
-    return fetchWithCache(
-      'dfa_fng_30',
-      'https://api.alternative.me/fng/?limit=30'
-    );
+    const url = isBackend()
+      ? `${BASE_URL()}/api/fng?limit=30`
+      : 'https://api.alternative.me/fng/?limit=30';
+    return fetchWithCache('dfa_fng_30', url);
   }
 
   /**
@@ -207,6 +219,25 @@ const DFA_API = (function () {
     const cacheKey = `dfa_btc_price_${ddmmyyyy}`;
     const cached = getCached(cacheKey);
     if (cached != null) return { data: { usd: cached }, fromCache: true, stale: false };
+
+    // Backend path: hit DB directly — fast, reliable, no rate limits
+    if (isBackend()) {
+      const [dd, mm, yyyy] = ddmmyyyy.split('-');
+      const isoDate = `${yyyy}-${mm}-${dd}`;
+      try {
+        const res = await fetch(`${BASE_URL()}/api/btc-price-on-date?date=${isoDate}`);
+        if (res.ok) {
+          const json = await res.json();
+          if (json?.usd) {
+            setCache(cacheKey, json.usd);
+            return { data: { usd: json.usd }, fromCache: false, stale: false };
+          }
+        }
+      } catch { /* fall through to stale */ }
+      const stale = getCachedStale(cacheKey);
+      if (stale != null) return { data: { usd: stale }, fromCache: true, stale: true };
+      return { data: { usd: null }, fromCache: false, stale: false };
+    }
 
     const [dd, mm, yyyy] = ddmmyyyy.split('-');
     const midnightUtc = Date.UTC(+yyyy, +mm - 1, +dd);
