@@ -53,10 +53,16 @@ export function getBtcPriceOnDate(date) {
   if (row) return { usd: row.price_usd, approximate: false };
 
   // Closest past date
-  const closest = db.prepare(
+  const past = db.prepare(
     'SELECT date, price_usd FROM btc_prices WHERE date <= ? ORDER BY date DESC LIMIT 1'
   ).get(date);
-  if (closest) return { usd: closest.price_usd, approximate: true, closestDate: closest.date };
+  if (past) return { usd: past.price_usd, approximate: true, closestDate: past.date };
+
+  // Closest future date (fallback when date is before our earliest data)
+  const future = db.prepare(
+    'SELECT date, price_usd FROM btc_prices WHERE date >= ? ORDER BY date ASC LIMIT 1'
+  ).get(date);
+  if (future) return { usd: future.price_usd, approximate: true, closestDate: future.date };
 
   return null;
 }
