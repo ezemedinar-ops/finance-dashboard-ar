@@ -1,2 +1,2 @@
 [phases.setup]
-nixPkgs = ["python3"]
+aptPkgs = ["python3", "make", "g++"]
