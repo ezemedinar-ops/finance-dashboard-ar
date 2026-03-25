@@ -65,7 +65,10 @@ const HOUR1 = 60 * 60 * 1000;
 
 // Health check
 app.get('/health', (req, res) => {
-  res.json({ ok: true, btcRows: getBtcCount(), ts: new Date().toISOString() });
+  const db = getDb();
+  const blueCount = db.prepare('SELECT COUNT(*) as n FROM blue_rates').get().n;
+  const oficialCount = db.prepare('SELECT COUNT(*) as n FROM oficial_rates').get().n;
+  res.json({ ok: true, v: 2, btcRows: getBtcCount(), blueRows: blueCount, oficialRows: oficialCount, ts: new Date().toISOString() });
 });
 
 // Dollar rates
