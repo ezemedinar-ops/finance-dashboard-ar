@@ -88,16 +88,14 @@
 </div>
 
 <!-- TopNavBar -->
-<nav class="bg-[#fcf9f8] dark:bg-zinc-950 docked full-width top-0 border-b-4 border-[#330001] dark:border-zinc-800 z-50 sticky">
+<header class="bg-[#fcf9f8] dark:bg-zinc-950 sticky top-0 border-b-4 border-[#330001] dark:border-zinc-800 z-50">
 <div class="flex justify-between items-center w-full px-6 py-4 max-w-7xl mx-auto">
-<div class="text-2xl font-black tracking-tighter text-[#330001] dark:text-zinc-100 font-['Inter'] uppercase">
-                DÓLAR+CRYPTO
-            </div>
+<div class="text-2xl font-black tracking-tighter text-[#330001] dark:text-zinc-100 font-['Inter'] uppercase">DÓLAR+CRYPTO</div>
 <div class="hidden md:flex items-center gap-8">
-<a class="text-[#444650] dark:text-zinc-400 font-medium font-['Inter'] font-black tracking-tighter uppercase hover:bg-zinc-200 dark:hover:bg-zinc-800 transition-colors px-2 py-1" href="index.html">Resumen</a>
-<a class="text-[#444650] dark:text-zinc-400 font-medium font-['Inter'] font-black tracking-tighter uppercase hover:bg-zinc-200 dark:hover:bg-zinc-800 transition-colors px-2 py-1" href="conversor.html">Conversor</a>
-<a class="text-[#c0000c] dark:text-[#ef4444] font-bold border-b-2 border-[#c0000c] font-['Inter'] font-black tracking-tighter uppercase px-2 py-1" href="#">Mercado</a>
-<a class="text-[#444650] dark:text-zinc-400 font-medium font-['Inter'] font-black tracking-tighter uppercase hover:bg-zinc-200 dark:hover:bg-zinc-800 transition-colors px-2 py-1" href="historial.html">Historial</a>
+<a class="text-[#444650] dark:text-zinc-400 font-medium font-['Inter'] uppercase tracking-widest text-xs hover:bg-zinc-200 dark:hover:bg-zinc-800 transition-colors px-2 py-1" href="index.html">Resumen</a>
+<a class="text-[#444650] dark:text-zinc-400 font-medium font-['Inter'] uppercase tracking-widest text-xs hover:bg-zinc-200 dark:hover:bg-zinc-800 transition-colors px-2 py-1" href="conversor.html">Conversor</a>
+<a class="text-[#c0000c] dark:text-[#ef4444] font-bold border-b-2 border-[#c0000c] font-['Inter'] uppercase tracking-widest text-xs px-2 py-1" href="#">Mercado</a>
+<a class="text-[#444650] dark:text-zinc-400 font-medium font-['Inter'] uppercase tracking-widest text-xs hover:bg-zinc-200 dark:hover:bg-zinc-800 transition-colors px-2 py-1" href="historial.html">Historial</a>
 </div>
 <div class="flex items-center gap-4">
 <button class="p-2 hover:bg-zinc-200 dark:hover:bg-zinc-800 transition-colors active:scale-95 duration-100">
@@ -108,29 +106,29 @@
 </button>
 </div>
 </div>
-</nav>
+</header>
 
 <div class="flex max-w-7xl mx-auto">
 <!-- SideNavBar (Hidden on Mobile) -->
-<aside class="hidden md:flex flex-col w-64 h-screen sticky top-[72px] bg-[#fcf9f8] dark:bg-zinc-900 docked left-0 border-r-4 border-[#330001] dark:border-zinc-800 py-8">
-<div class="px-6 mb-10">
+<aside class="hidden md:flex flex-col w-64 h-[calc(100vh-72px)] sticky top-[72px] bg-[#fcf9f8] dark:bg-zinc-900 border-r-4 border-[#330001] dark:border-zinc-800">
+<div class="p-6">
 <h2 class="font-['Inter'] font-bold uppercase tracking-[0.15em] text-[12px] text-[#c0000c] mb-1">ESTADÍSTICAS</h2>
-<p class="font-['Inter'] font-bold uppercase tracking-[0.15em] text-[10px] text-outline">FINANZAS ARGENTINAS</p>
+<p class="font-['Inter'] font-bold uppercase tracking-[0.1em] text-[10px] text-[#330001] opacity-60">FINANZAS ARGENTINAS</p>
 </div>
-<nav class="flex flex-col">
-<a class="text-[#330001] dark:text-zinc-300 p-6 flex items-center gap-4 hover:translate-x-1 transition-transform duration-200 hover:bg-zinc-100 dark:hover:bg-zinc-800" href="index.html">
+<nav class="flex-1">
+<a class="text-[#330001] dark:text-zinc-300 p-4 flex items-center gap-4 hover:translate-x-1 transition-transform duration-200 hover:bg-zinc-100 dark:hover:bg-zinc-800" href="index.html">
 <span class="material-symbols-outlined">grid_view</span>
 <span class="font-['Inter'] font-bold uppercase tracking-[0.15em] text-[12px]">Resumen</span>
 </a>
-<a class="text-[#330001] dark:text-zinc-300 p-6 flex items-center gap-4 hover:translate-x-1 transition-transform duration-200 hover:bg-zinc-100 dark:hover:bg-zinc-800" href="conversor.html">
+<a class="text-[#330001] dark:text-zinc-300 p-4 flex items-center gap-4 hover:translate-x-1 transition-transform duration-200 hover:bg-zinc-100 dark:hover:bg-zinc-800" href="conversor.html">
 <span class="material-symbols-outlined">currency_exchange</span>
 <span class="font-['Inter'] font-bold uppercase tracking-[0.15em] text-[12px]">Conversor</span>
 </a>
-<a class="bg-[#330001] text-white dark:bg-zinc-100 dark:text-black p-6 flex items-center gap-4" href="#">
+<a class="bg-[#330001] text-white dark:bg-zinc-100 dark:text-black p-4 flex items-center gap-4" href="#">
 <span class="material-symbols-outlined">currency_bitcoin</span>
 <span class="font-['Inter'] font-bold uppercase tracking-[0.15em] text-[12px]">Mercado</span>
 </a>
-<a class="text-[#330001] dark:text-zinc-300 p-6 flex items-center gap-4 hover:translate-x-1 transition-transform duration-200 hover:bg-zinc-100 dark:hover:bg-zinc-800" href="historial.html">
+<a class="text-[#330001] dark:text-zinc-300 p-4 flex items-center gap-4 hover:translate-x-1 transition-transform duration-200 hover:bg-zinc-100 dark:hover:bg-zinc-800" href="historial.html">
 <span class="material-symbols-outlined">timeline</span>
 <span class="font-['Inter'] font-bold uppercase tracking-[0.15em] text-[12px]">Historial</span>
 </a>

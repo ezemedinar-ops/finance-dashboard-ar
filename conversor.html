@@ -66,7 +66,7 @@
               "body": ["Inter"],
               "label": ["Inter"]
             },
-            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+            borderRadius: {"DEFAULT": "0px", "lg": "0px", "xl": "0px", "full": "9999px"},
           },
         },
       }
@@ -79,78 +79,67 @@
         .vignelli-reveal { border-left: 4px solid #330001; }
     </style>
 </head>
-<body class="bg-background text-on-background min-h-screen flex flex-col md:flex-row">
+<body class="bg-background text-on-background min-h-screen">
 
 <!-- Error Banner -->
-<div id="dfa-error-banner" style="display:none" class="bg-error-container text-on-error-container px-6 py-3 flex items-center gap-4 fixed top-0 left-0 w-full z-[60]">
+<div id="dfa-error-banner" style="display:none" class="bg-error-container text-on-error-container px-6 py-3 flex items-center gap-4 sticky top-0 z-[60]">
   <span class="material-symbols-outlined text-sm">warning</span>
   <span class="font-bold text-xs uppercase tracking-widest">Error al cargar datos</span>
   <span id="dfa-error-message" class="text-sm font-medium"></span>
 </div>
 
-<!-- SideNavBar (Desktop) -->
-<aside class="hidden md:flex flex-col w-64 h-screen sticky top-0 bg-[#fcf9f8] border-r-4 border-[#330001]">
-<div class="p-8">
-<h1 class="text-xl font-black text-[#330001] tracking-tighter uppercase">DÓLAR+CRYPTO</h1>
-</div>
-<nav class="flex-1">
-<div class="px-4 py-2">
-<p class="font-bold uppercase tracking-[0.15em] text-[12px] text-[#444650] mb-4 px-4">ESTADÍSTICAS</p>
-<ul class="space-y-1">
-<li>
-<a class="text-[#330001] p-4 flex items-center gap-4 hover:translate-x-1 transition-transform duration-200" href="index.html">
-<span class="material-symbols-outlined">grid_view</span>
-<span class="font-bold uppercase tracking-[0.15em] text-[12px]">Resumen</span>
-</a>
-</li>
-<li>
-<a class="bg-[#330001] text-white p-4 flex items-center gap-4" href="#">
-<span class="material-symbols-outlined">currency_exchange</span>
-<span class="font-bold uppercase tracking-[0.15em] text-[12px]">Conversor</span>
-</a>
-</li>
-<li>
-<a class="text-[#330001] p-4 flex items-center gap-4 hover:translate-x-1 transition-transform duration-200" href="mercado.html">
-<span class="material-symbols-outlined">currency_bitcoin</span>
-<span class="font-bold uppercase tracking-[0.15em] text-[12px]">Mercado</span>
-</a>
-</li>
-<li>
-<a class="text-[#330001] p-4 flex items-center gap-4 hover:translate-x-1 transition-transform duration-200" href="historial.html">
-<span class="material-symbols-outlined">timeline</span>
-<span class="font-bold uppercase tracking-[0.15em] text-[12px]">Historial</span>
-</a>
-</li>
-</ul>
-</div>
-</nav>
-<div class="p-8 border-t-2 border-[#330001]/10">
-<p class="font-bold uppercase tracking-[0.15em] text-[10px] text-outline">FINANZAS ARGENTINAS</p>
-</div>
-</aside>
-
-<!-- Main Stage -->
-<main class="flex-1 flex flex-col min-h-screen bg-surface-container-low">
-<!-- TopAppBar -->
-<header class="bg-[#fcf9f8] border-b-4 border-[#330001] w-full">
+<!-- TopNavBar -->
+<header class="bg-[#fcf9f8] dark:bg-zinc-950 sticky top-0 border-b-4 border-[#330001] dark:border-zinc-800 z-50">
 <div class="flex justify-between items-center w-full px-6 py-4 max-w-7xl mx-auto">
-<div class="flex items-center gap-4">
-<span class="md:hidden text-2xl font-black tracking-tighter text-[#330001]">D+C</span>
-<h2 class="font-['Inter'] font-black tracking-tighter uppercase text-[#c0000c] text-lg">Conversor Inteligente</h2>
+<div class="text-2xl font-black tracking-tighter text-[#330001] dark:text-zinc-100 font-['Inter'] uppercase">DÓLAR+CRYPTO</div>
+<div class="hidden md:flex items-center gap-8">
+<a class="text-[#444650] dark:text-zinc-400 font-medium font-['Inter'] uppercase tracking-widest text-xs hover:bg-zinc-200 dark:hover:bg-zinc-800 transition-colors px-2 py-1" href="index.html">Resumen</a>
+<a class="text-[#c0000c] dark:text-[#ef4444] font-bold border-b-2 border-[#c0000c] font-['Inter'] uppercase tracking-widest text-xs px-2 py-1" href="#">Conversor</a>
+<a class="text-[#444650] dark:text-zinc-400 font-medium font-['Inter'] uppercase tracking-widest text-xs hover:bg-zinc-200 dark:hover:bg-zinc-800 transition-colors px-2 py-1" href="mercado.html">Mercado</a>
+<a class="text-[#444650] dark:text-zinc-400 font-medium font-['Inter'] uppercase tracking-widest text-xs hover:bg-zinc-200 dark:hover:bg-zinc-800 transition-colors px-2 py-1" href="historial.html">Historial</a>
 </div>
-<div class="flex gap-4">
-<button class="p-2 hover:bg-zinc-200 transition-colors active:scale-95 duration-100">
-<span class="material-symbols-outlined">account_balance_wallet</span>
+<div class="flex items-center gap-4">
+<button class="p-2 hover:bg-zinc-200 dark:hover:bg-zinc-800 transition-colors active:scale-95 duration-100">
+<span class="material-symbols-outlined text-[#330001] dark:text-zinc-100">account_balance_wallet</span>
 </button>
-<button class="p-2 hover:bg-zinc-200 transition-colors active:scale-95 duration-100">
-<span class="material-symbols-outlined">settings</span>
+<button class="p-2 hover:bg-zinc-200 dark:hover:bg-zinc-800 transition-colors active:scale-95 duration-100">
+<span class="material-symbols-outlined text-[#330001] dark:text-zinc-100">settings</span>
 </button>
 </div>
 </div>
 </header>
 
+<div class="flex max-w-7xl mx-auto min-h-screen">
+<!-- SideNavBar (Desktop) -->
+<aside class="hidden md:flex flex-col w-64 h-[calc(100vh-72px)] sticky top-[72px] bg-[#fcf9f8] dark:bg-zinc-900 border-r-4 border-[#330001] dark:border-zinc-800">
+<div class="p-6">
+<h2 class="font-['Inter'] font-bold uppercase tracking-[0.15em] text-[12px] text-[#c0000c] mb-1">ESTADÍSTICAS</h2>
+<p class="font-['Inter'] font-bold uppercase tracking-[0.1em] text-[10px] text-[#330001] opacity-60">FINANZAS ARGENTINAS</p>
+</div>
+<nav class="flex-1">
+<a class="text-[#330001] dark:text-zinc-300 p-4 flex items-center gap-4 hover:translate-x-1 transition-transform duration-200 hover:bg-zinc-100 dark:hover:bg-zinc-800" href="index.html">
+<span class="material-symbols-outlined">grid_view</span>
+<span class="font-['Inter'] font-bold uppercase tracking-[0.15em] text-[12px]">Resumen</span>
+</a>
+<a class="bg-[#330001] text-white dark:bg-zinc-100 dark:text-black p-4 flex items-center gap-4" href="#">
+<span class="material-symbols-outlined">currency_exchange</span>
+<span class="font-['Inter'] font-bold uppercase tracking-[0.15em] text-[12px]">Conversor</span>
+</a>
+<a class="text-[#330001] dark:text-zinc-300 p-4 flex items-center gap-4 hover:translate-x-1 transition-transform duration-200 hover:bg-zinc-100 dark:hover:bg-zinc-800" href="mercado.html">
+<span class="material-symbols-outlined">currency_bitcoin</span>
+<span class="font-['Inter'] font-bold uppercase tracking-[0.15em] text-[12px]">Mercado</span>
+</a>
+<a class="text-[#330001] dark:text-zinc-300 p-4 flex items-center gap-4 hover:translate-x-1 transition-transform duration-200 hover:bg-zinc-100 dark:hover:bg-zinc-800" href="historial.html">
+<span class="material-symbols-outlined">timeline</span>
+<span class="font-['Inter'] font-bold uppercase tracking-[0.15em] text-[12px]">Historial</span>
+</a>
+</nav>
+</aside>
+
+<!-- Main Stage -->
+<main class="flex-1 bg-surface-container-low">
 <!-- Content Canvas -->
-<section class="p-6 md:p-12 max-w-7xl mx-auto w-full">
+<section class="p-6 md:p-12 w-full">
 <!-- Hero Conversion Input -->
 <div class="bg-surface-container-lowest p-8 md:p-16 border-b-4 border-primary mb-12">
 <div class="max-w-4xl mx-auto space-y-12">
@@ -276,24 +265,25 @@
 </div>
 </section>
 </main>
+</div>
 
 <!-- BottomNavBar (Mobile) -->
-<nav class="md:hidden fixed bottom-0 left-0 w-full z-50 bg-[#fcf9f8]/80 backdrop-blur-xl border-t-2 border-[#330001] flex justify-around items-center px-4 pb-6 pt-2">
-<a class="flex flex-col items-center justify-center text-[#444650] p-2" href="index.html">
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 pb-6 pt-2 md:hidden bg-[#fcf9f8]/80 dark:bg-zinc-950/80 backdrop-blur-xl border-t-2 border-[#330001] dark:border-zinc-800">
+<a class="flex flex-col items-center justify-center text-[#444650] dark:text-zinc-500 p-2 font-['Inter'] font-bold text-[10px] uppercase tracking-widest" href="index.html">
 <span class="material-symbols-outlined">home</span>
-<span class="font-['Inter'] font-bold text-[10px] uppercase tracking-widest mt-1">Home</span>
+<span>Home</span>
 </a>
-<a class="flex flex-col items-center justify-center text-[#c0000c] p-2 scale-110" href="#">
+<a class="flex flex-col items-center justify-center text-[#c0000c] dark:text-[#ef4444] p-2 scale-110 font-['Inter'] font-bold text-[10px] uppercase tracking-widest" href="#">
 <span class="material-symbols-outlined">sync_alt</span>
-<span class="font-['Inter'] font-bold text-[10px] uppercase tracking-widest mt-1">Convert</span>
+<span>Convert</span>
 </a>
-<a class="flex flex-col items-center justify-center text-[#444650] p-2" href="mercado.html">
+<a class="flex flex-col items-center justify-center text-[#444650] dark:text-zinc-500 p-2 font-['Inter'] font-bold text-[10px] uppercase tracking-widest" href="mercado.html">
 <span class="material-symbols-outlined">paid</span>
-<span class="font-['Inter'] font-bold text-[10px] uppercase tracking-widest mt-1">Crypto</span>
+<span>Crypto</span>
 </a>
-<a class="flex flex-col items-center justify-center text-[#444650] p-2" href="historial.html">
+<a class="flex flex-col items-center justify-center text-[#444650] dark:text-zinc-500 p-2 font-['Inter'] font-bold text-[10px] uppercase tracking-widest" href="historial.html">
 <span class="material-symbols-outlined">analytics</span>
-<span class="font-['Inter'] font-bold text-[10px] uppercase tracking-widest mt-1">History</span>
+<span>History</span>
 </a>
 </nav>
 
