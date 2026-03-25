@@ -436,8 +436,8 @@ Calcular
       const cgDate = `${dd}-${mm}-${yyyy}`;
       let btcUsdThen = null;
       try {
-        const btcResult = await api.getBtcHistoryByDate(cgDate);
-        btcUsdThen = btcResult?.data?.market_data?.current_price?.usd || null;
+        const btcResult = await api.getBtcPriceOnDate(cgDate);
+        btcUsdThen = btcResult?.data?.usd || null;
       } catch { /* CoinGecko history unavailable for this date */ }
 
       // 1. En pesos (nominal — no change)

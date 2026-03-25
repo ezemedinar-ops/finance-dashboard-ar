@@ -197,6 +197,65 @@ const DFA_API = (function () {
     );
   }
 
+  /**
+   * CoinGecko — BTC USD price on a specific date with fallback
+   * date: DD-MM-YYYY format
+   * Tries /history first; falls back to /market_chart/range if market_data is null
+   * Returns { data: { usd: number|null } }
+   */
+  async function getBtcPriceOnDate(ddmmyyyy) {
+    const cacheKey = `dfa_btc_price_${ddmmyyyy}`;
+    const cached = getCached(cacheKey);
+    if (cached != null) return { data: { usd: cached }, fromCache: true, stale: false };
+
+    const [dd, mm, yyyy] = ddmmyyyy.split('-');
+    const midnightUtc = Date.UTC(+yyyy, +mm - 1, +dd);
+    const fromTs = Math.floor((midnightUtc - 86400000) / 1000);
+    const toTs   = Math.floor((midnightUtc + 2 * 86400000) / 1000);
+
+    // Try 1: /history endpoint
+    try {
+      const res = await cgFetch(
+        `https://api.coingecko.com/api/v3/coins/bitcoin/history?date=${ddmmyyyy}&localization=false`
+      );
+      if (res.ok) {
+        const json = await res.json();
+        const usd = json?.market_data?.current_price?.usd;
+        if (usd) {
+          setCache(cacheKey, usd);
+          return { data: { usd }, fromCache: false, stale: false };
+        }
+      }
+    } catch { /* fall through to range endpoint */ }
+
+    // Try 2: /market_chart/range (more reliable on demo tier)
+    try {
+      const res = await cgFetch(
+        `https://api.coingecko.com/api/v3/coins/bitcoin/market_chart/range?vs_currency=usd&from=${fromTs}&to=${toTs}`
+      );
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const json = await res.json();
+      const prices = json?.prices;
+      if (prices?.length) {
+        let best = prices[0];
+        let minDiff = Math.abs(best[0] - midnightUtc);
+        for (const p of prices) {
+          const diff = Math.abs(p[0] - midnightUtc);
+          if (diff < minDiff) { minDiff = diff; best = p; }
+        }
+        const usd = best[1];
+        setCache(cacheKey, usd);
+        return { data: { usd }, fromCache: false, stale: false };
+      }
+    } catch { /* fall through */ }
+
+    // Stale fallback
+    const stale = getCachedStale(cacheKey);
+    if (stale != null) return { data: { usd: stale }, fromCache: true, stale: true };
+
+    return { data: { usd: null }, fromCache: false, stale: false };
+  }
+
   // ─── Cache management ────────────────────────────────────────────────────
   function clearDolares() { clearCache('dfa_dolares'); }
   function clearBtcHistory(days) { clearCache(`dfa_history_${days}d`); }
@@ -213,6 +272,7 @@ const DFA_API = (function () {
     getCoinGeckoGlobal,
     getBtcHistory,
     getBtcHistoryByDate,
+    getBtcPriceOnDate,
     getBlueHistory,
     getFearGreed,
     getFearGreed30,
