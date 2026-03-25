@@ -58,6 +58,21 @@ function withCache(key, ttlMs, fetchFn) {
   return fresh;
 }
 
+// ─── Volatility calculation ───────────────────────────────────────────────────
+
+function calcVolatility(prices) {
+  if (!prices || prices.length < 2) return null;
+  const returns = [];
+  for (let i = 1; i < prices.length; i++) {
+    if (prices[i - 1] === 0) continue;
+    returns.push(prices[i] / prices[i - 1] - 1);
+  }
+  if (returns.length < 2) return null;
+  const mean = returns.reduce((a, b) => a + b, 0) / returns.length;
+  const variance = returns.reduce((a, r) => a + (r - mean) ** 2, 0) / (returns.length - 1);
+  return Math.sqrt(variance) * 100; // percentage
+}
+
 const MIN5  = 5 * 60 * 1000;
 const HOUR1 = 60 * 60 * 1000;
 
@@ -91,11 +106,17 @@ app.get('/api/btc-price', async (req, res) => {
   }
 });
 
-// Crypto: top 20 markets
+// Crypto: top 20 markets (enriched with volatility score)
 app.get('/api/markets', async (req, res) => {
   try {
-    const data = await withCache('markets', MIN5, fetchMarkets);
-    res.json(data);
+    const raw = await withCache('markets', MIN5, fetchMarkets);
+    const enriched = raw.map(coin => {
+      const sparkPrices = coin.sparkline_in_7d?.price;
+      const volatility_7d = calcVolatility(sparkPrices);
+      const { sparkline_in_7d, ...rest } = coin;
+      return { ...rest, volatility_7d };
+    });
+    res.json(enriched);
   } catch (err) {
     res.status(502).json({ error: err.message });
   }

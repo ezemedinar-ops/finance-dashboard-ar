@@ -115,6 +115,7 @@ function showTableSkeletons() {
       <td class="p-3 md:p-6 text-right hidden sm:table-cell"><span class="dfa-skeleton w-24 md:w-28 h-5"></span></td>
       <td class="p-3 md:p-6 text-right"><span class="dfa-skeleton w-14 md:w-16 h-5"></span></td>
       <td class="p-3 md:p-6 text-right hidden lg:table-cell"><span class="dfa-skeleton w-16 h-5"></span></td>
+      <td class="p-3 md:p-6 text-right hidden lg:table-cell"><span class="dfa-skeleton w-14 h-5"></span></td>
     </tr>`;
   }
   tbody.innerHTML = html;

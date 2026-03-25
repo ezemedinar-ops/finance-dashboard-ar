@@ -172,6 +172,7 @@
 <th class="p-3 md:p-6 text-[10px] font-black uppercase tracking-widest text-primary text-right hidden sm:table-cell">ARS (Blue)</th>
 <th data-sort="change" class="p-3 md:p-6 text-[10px] font-black uppercase tracking-widest text-primary text-right cursor-pointer select-none hover:text-secondary">Var. 24h<span class="sort-ind ml-1"></span></th>
 <th data-sort="mcap" class="p-3 md:p-6 text-[10px] font-black uppercase tracking-widest text-primary text-right hidden lg:table-cell cursor-pointer select-none hover:text-secondary">Market Cap<span class="sort-ind ml-1"></span></th>
+<th data-sort="volatility" class="p-3 md:p-6 text-[10px] font-black uppercase tracking-widest text-primary text-right hidden lg:table-cell cursor-pointer select-none hover:text-secondary">Vol. 7D<span class="sort-ind ml-1"></span></th>
 </tr>
 </thead>
 <tbody id="crypto-table-body" class="divide-y-4 divide-surface-container">
@@ -262,6 +263,13 @@
       .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
   }
 
+  function volColor(v) {
+    if (v == null) return 'text-outline';
+    if (v < 2)  return 'bg-green-100 text-green-800';
+    if (v < 5)  return 'bg-yellow-100 text-yellow-800';
+    return 'bg-red-100 text-red-800';
+  }
+
   // ─── Build one table row ─────────────────────────────────────────────────
   function buildRow(coin, index) {
     const change = coin.price_change_percentage_24h || 0;
@@ -303,6 +311,11 @@
         </div>
       </td>
       <td class="p-3 md:p-6 text-right hidden lg:table-cell font-medium text-outline">${formatMarketCap(coin.market_cap)}</td>
+      <td class="p-3 md:p-6 text-right hidden lg:table-cell">
+        <span class="inline-block px-2 py-1 font-black text-xs tracking-wider ${volColor(coin.volatility_7d)}">
+          ${coin.volatility_7d != null ? coin.volatility_7d.toFixed(2) + '%' : '—'}
+        </span>
+      </td>
     </tr>`;
   }
 
@@ -314,7 +327,7 @@
       : [...allCoins];
 
     if (sortState.col) {
-      const keyMap = { price: 'current_price', change: 'price_change_percentage_24h', mcap: 'market_cap' };
+      const keyMap = { price: 'current_price', change: 'price_change_percentage_24h', mcap: 'market_cap', volatility: 'volatility_7d' };
       const key = keyMap[sortState.col];
       coins.sort((a, b) => sortState.dir === 'desc' ? (b[key] || 0) - (a[key] || 0) : (a[key] || 0) - (b[key] || 0));
     }
@@ -322,7 +335,7 @@
     const tbody = document.getElementById('crypto-table-body');
     if (!tbody) return;
     if (coins.length === 0) {
-      tbody.innerHTML = `<tr><td colspan="6" class="p-12 text-center font-bold text-outline uppercase tracking-widest">Sin resultados</td></tr>`;
+      tbody.innerHTML = `<tr><td colspan="7" class="p-12 text-center font-bold text-outline uppercase tracking-widest">Sin resultados</td></tr>`;
       return;
     }
     tbody.innerHTML = coins.map((c, i) => buildRow(c, i)).join('');
@@ -550,7 +563,7 @@
       showError('No se pudo cargar el mercado crypto.');
       console.error('[DFA Mercado]', err);
       const tbody = document.getElementById('crypto-table-body');
-      if (tbody) tbody.innerHTML = `<tr><td colspan="6" class="p-12 text-center font-bold text-outline uppercase tracking-widest">Error al cargar datos. Recargá la página.</td></tr>`;
+      if (tbody) tbody.innerHTML = `<tr><td colspan="7" class="p-12 text-center font-bold text-outline uppercase tracking-widest">Error al cargar datos. Recargá la página.</td></tr>`;
     }
   }
 
