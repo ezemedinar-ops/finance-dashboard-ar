@@ -4,19 +4,20 @@
  */
 
 import Database from 'better-sqlite3';
+import { mkdirSync } from 'fs';
 import path from 'path';
 
 // Store DB in /data on Railway (mounted volume), or local ./data folder
 const DB_DIR = process.env.DATA_DIR || './data';
 const DB_PATH = path.join(DB_DIR, 'finance.db');
 
+// Ensure directory exists at module load time (synchronous)
+mkdirSync(DB_DIR, { recursive: true });
+
 let _db = null;
 
 export function getDb() {
   if (_db) return _db;
-
-  // Ensure directory exists
-  import('fs').then(fs => fs.mkdirSync(DB_DIR, { recursive: true }));
 
   _db = new Database(DB_PATH);
   _db.pragma('journal_mode = WAL'); // Better concurrent read performance
