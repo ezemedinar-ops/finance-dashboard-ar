@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+
+<html class="light" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>DÓLAR+CRYPTO | Historial</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800;900&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "secondary-container": "#5f93ff",
+              "on-secondary": "#ffffff",
+              "on-tertiary": "#ffffff",
+              "on-background": "#1c1b1b",
+              "outline": "#757682",
+              "on-secondary-fixed": "#001944",
+              "on-surface": "#1c1b1b",
+              "primary-fixed-dim": "#ffb4aa",
+              "tertiary-container": "#c9a900",
+              "surface-tint": "#c0000c",
+              "surface-container-high": "#eae7e7",
+              "on-secondary-fixed-variant": "#00429a",
+              "error": "#ba1a1a",
+              "surface-variant": "#e5e2e1",
+              "surface-bright": "#fcf9f8",
+              "tertiary": "#705d00",
+              "surface-container-low": "#f6f3f2",
+              "outline-variant": "#c5c6d2",
+              "on-primary-fixed": "#410001",
+              "inverse-surface": "#313030",
+              "surface-dim": "#dcd9d9",
+              "on-secondary-container": "#002b6a",
+              "tertiary-fixed-dim": "#e9c400",
+              "secondary": "#1659c2",
+              "on-tertiary-fixed": "#221b00",
+              "on-primary-container": "#ff5244",
+              "secondary-fixed": "#d9e2ff",
+              "surface": "#fcf9f8",
+              "on-error": "#ffffff",
+              "surface-container-highest": "#e5e2e1",
+              "primary-container": "#5a0002",
+              "primary": "#330001",
+              "primary-fixed": "#ffdad5",
+              "on-primary": "#ffffff",
+              "on-error-container": "#93000a",
+              "surface-container": "#f0eded",
+              "on-tertiary-fixed-variant": "#544600",
+              "surface-container-lowest": "#ffffff",
+              "inverse-on-surface": "#f3f0ef",
+              "inverse-primary": "#ffb4aa",
+              "tertiary-fixed": "#ffe16d",
+              "on-primary-fixed-variant": "#930007",
+              "on-surface-variant": "#444650",
+              "background": "#fcf9f8",
+              "secondary-fixed-dim": "#b0c6ff",
+              "on-tertiary-container": "#4c3f00",
+              "error-container": "#ffdad6"
+            },
+            fontFamily: {
+              "headline": ["Inter"],
+              "body": ["Inter"],
+              "label": ["Inter"]
+            },
+            borderRadius: {"DEFAULT": "0px", "lg": "0px", "xl": "0px", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body { font-family: 'Inter', sans-serif; background-color: #fcf9f8; }
+        .filter-btn-active { background: white; color: #330001; font-weight: 900; }
+        .filter-btn-inactive { color: white; }
+        .filter-btn-inactive:hover { background: rgba(255,255,255,0.1); }
+    </style>
+</head>
+<body class="text-on-surface">
+
+<!-- Error Banner -->
+<div id="dfa-error-banner" style="display:none" class="bg-error-container text-on-error-container px-6 py-3 flex items-center gap-4 fixed top-0 left-0 w-full z-[60]">
+  <span class="material-symbols-outlined text-sm">warning</span>
+  <span class="font-bold text-xs uppercase tracking-widest">Error al cargar datos</span>
+  <span id="dfa-error-message" class="text-sm font-medium"></span>
+</div>
+
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-[#fcf9f8] dark:bg-zinc-950 flex justify-between items-center h-20 px-8 border-b-4 border-[#330001]">
+<div class="text-3xl font-black text-[#330001] dark:text-white tracking-tighter uppercase">DÓLAR+CRYPTO</div>
+<nav class="hidden md:flex items-center space-x-0 h-full">
+<a class="h-full flex items-center px-6 font-black tracking-tighter uppercase text-[#444650] hover:bg-[#330001] hover:text-white transition-colors duration-100" href="index.html">Resumen</a>
+<a class="h-full flex items-center px-6 font-black tracking-tighter uppercase text-[#444650] hover:bg-[#330001] hover:text-white transition-colors duration-100" href="conversor.html">Conversor</a>
+<a class="h-full flex items-center px-6 font-black tracking-tighter uppercase text-[#444650] hover:bg-[#330001] hover:text-white transition-colors duration-100" href="mercado.html">Mercado</a>
+<a class="h-full flex items-center px-6 font-black tracking-tighter uppercase text-[#c0000c] border-b-4 border-[#c0000c]" href="#">Historial</a>
+</nav>
+<div class="flex items-center space-x-4">
+<button class="material-symbols-outlined text-[#330001]">account_balance_wallet</button>
+<button class="material-symbols-outlined text-[#330001]">settings</button>
+</div>
+</header>
+
+<!-- SideNavBar -->
+<aside class="fixed left-0 top-20 h-[calc(100vh-80px)] w-64 bg-[#fcf9f8] dark:bg-zinc-900 border-r-4 border-[#330001] hidden md:flex flex-col py-10">
+<div class="px-8 mb-10">
+<h2 class="font-bold text-sm uppercase tracking-tight text-[#c0000c]">ESTADÍSTICAS</h2>
+<p class="text-[10px] font-bold text-outline uppercase tracking-widest">FINANZAS ARGENTINAS</p>
+</div>
+<nav class="flex flex-col">
+<a class="flex items-center space-x-4 text-[#330001] dark:text-gray-300 px-8 py-4 hover:bg-zinc-100 dark:hover:bg-zinc-800 hover:translate-x-1 transition-transform duration-200 font-bold uppercase tracking-tight" href="index.html">
+<span class="material-symbols-outlined">grid_view</span>
+<span>Resumen</span>
+</a>
+<a class="flex items-center space-x-4 text-[#330001] dark:text-gray-300 px-8 py-4 hover:bg-zinc-100 dark:hover:bg-zinc-800 hover:translate-x-1 transition-transform duration-200 font-bold uppercase tracking-tight" href="conversor.html">
+<span class="material-symbols-outlined">currency_exchange</span>
+<span>Conversor</span>
+</a>
+<a class="flex items-center space-x-4 text-[#330001] dark:text-gray-300 px-8 py-4 hover:bg-zinc-100 dark:hover:bg-zinc-800 hover:translate-x-1 transition-transform duration-200 font-bold uppercase tracking-tight" href="mercado.html">
+<span class="material-symbols-outlined">currency_bitcoin</span>
+<span>Mercado</span>
+</a>
+<a class="flex items-center space-x-4 bg-[#330001] text-white px-8 py-4 font-bold uppercase tracking-tight" href="#">
+<span class="material-symbols-outlined">timeline</span>
+<span>Historial</span>
+</a>
+</nav>
+</aside>
+
+<!-- Main Content Stage -->
+<main class="md:ml-64 pt-20 pb-20 md:pb-0 min-h-screen">
+<div class="p-8 md:p-12 max-w-7xl mx-auto">
+
+<!-- Page Header -->
+<section class="mb-12">
+<h1 class="text-6xl md:text-8xl font-black tracking-[-0.05em] text-primary uppercase leading-none mb-4">Evolución<br/>Histórica</h1>
+<p class="text-outline font-bold uppercase tracking-[0.2em] text-sm">Análisis de activos y métricas de mercado</p>
+</section>
+
+<!-- Metrics Grid -->
+<section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-0 mb-12 border-4 border-[#330001]">
+<div class="bg-surface p-8 border-b-4 md:border-b-0 md:border-r-4 border-[#330001]">
+<p class="font-bold uppercase tracking-[0.15em] text-outline text-[11px] mb-6">Riesgo País</p>
+<div class="flex items-baseline space-x-2">
+<span class="text-5xl font-black tracking-tighter">1.452</span>
+<span class="text-error font-bold text-lg">+1.2%</span>
+</div>
+<p class="text-xs font-bold text-outline-variant mt-2">PUNTOS BÁSICOS (JP MORGAN)</p>
+</div>
+<div class="bg-surface p-8 border-b-4 md:border-b-0 lg:border-r-4 border-[#330001]">
+<p class="font-bold uppercase tracking-[0.15em] text-outline text-[11px] mb-6">Volatilidad 30D BTC</p>
+<div class="flex items-baseline space-x-2">
+<span id="metrics-volatilidad" class="text-5xl font-black tracking-tighter">—</span>
+</div>
+<p class="text-xs font-bold text-outline-variant mt-2">DESVIACIÓN ESTÁNDAR DIARIA</p>
+</div>
+<div class="bg-surface p-8 lg:col-span-1 md:col-span-2">
+<p class="font-bold uppercase tracking-[0.15em] text-outline text-[11px] mb-6">Liquidez de Mercado</p>
+<div class="flex items-baseline space-x-2">
+<span class="text-5xl font-black tracking-tighter">ALTA</span>
+</div>
+<p class="text-xs font-bold text-outline-variant mt-2">RATIO DE VOLUMEN OPERADO</p>
+</div>
+</section>
+
+<!-- Chart Section -->
+<section class="bg-surface-container-low border-4 border-[#330001] p-8 md:p-12">
+<div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-12 space-y-6 md:space-y-0">
+<div>
+<h3 class="text-3xl font-black uppercase tracking-tight">Evolución de Activos</h3>
+<div id="chart-legend" class="flex items-center space-x-6 mt-2">
+<div class="flex items-center space-x-2">
+<div class="w-3 h-3 bg-[#330001]"></div>
+<span class="text-xs font-bold uppercase tracking-wider">Dólar Blue</span>
+</div>
+<div class="flex items-center space-x-2">
+<div class="w-3 h-3 bg-secondary"></div>
+<span class="text-xs font-bold uppercase tracking-wider">Bitcoin (USD)</span>
+</div>
+</div>
+</div>
+<!-- Time Filters -->
+<div class="flex bg-[#330001] p-1">
+<button id="filter-7d"  class="px-6 py-2 font-black text-sm uppercase tracking-widest filter-btn-active">7D</button>
+<button id="filter-30d" class="px-6 py-2 font-bold text-sm uppercase tracking-widest filter-btn-inactive">30D</button>
+<button id="filter-90d" class="px-6 py-2 font-bold text-sm uppercase tracking-widest filter-btn-inactive">90D</button>
+</div>
+</div>
+
+<!-- Chart Canvas -->
+<div class="relative w-full bg-white border-2 border-[#757682]/20 p-4" style="height:400px">
+<canvas id="history-chart"></canvas>
+</div>
+</section>
+
+<!-- Data Table / Details -->
+<section class="mt-12">
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+<div>
+<h4 class="text-xl font-black uppercase tracking-tighter mb-6 border-b-4 border-primary inline-block">Hitos Mensuales</h4>
+<div class="space-y-6">
+<div class="flex justify-between items-center p-4 bg-white border-l-8 border-primary">
+<div>
+<p class="text-xs font-bold text-outline uppercase tracking-widest">12 JUN 2024</p>
+<p class="font-black text-primary uppercase">Máximo Histórico BTC</p>
+</div>
+<span class="text-xl font-black tracking-tighter">$69,420</span>
+</div>
+<div class="flex justify-between items-center p-4 bg-white border-l-8 border-secondary">
+<div>
+<p class="text-xs font-bold text-outline uppercase tracking-widest">05 JUN 2024</p>
+<p class="font-black text-primary uppercase">Intervención BCRA</p>
+</div>
+<span class="text-xl font-black tracking-tighter">-$240M</span>
+</div>
+</div>
+</div>
+<div class="bg-primary text-white p-10 flex flex-col justify-center">
+<span class="material-symbols-outlined text-5xl mb-6">warning</span>
+<h4 class="text-3xl font-black uppercase leading-tight mb-4">Nota de Riesgo</h4>
+<p class="text-sm font-bold uppercase tracking-wide opacity-80 leading-relaxed">
+  Los datos históricos presentados están sujetos a rectificación oficial por los entes reguladores. La volatilidad implícita sugiere un escenario de alta incertidumbre para el próximo trimestre contable.
+</p>
+<button class="mt-8 self-start px-8 py-4 bg-white text-primary font-black uppercase tracking-widest hover:bg-tertiary-fixed hover:text-[#330001] transition-none">Descargar PDF</button>
+</div>
+</div>
+</section>
+
+</div>
+</main>
+
+<!-- BottomNavBar — 4 items, aligned with all other pages -->
+<nav class="fixed bottom-0 left-0 w-full h-16 flex justify-around items-center z-50 bg-[#fcf9f8]/80 dark:bg-zinc-900/80 backdrop-blur-xl border-t-4 border-[#330001] md:hidden">
+<a class="flex flex-col items-center justify-center text-[#444650] p-2" href="index.html">
+<span class="material-symbols-outlined">home</span>
+<span class="font-['Inter'] font-bold text-[10px] uppercase tracking-[0.15em]">Home</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#444650] p-2" href="conversor.html">
+<span class="material-symbols-outlined">sync_alt</span>
+<span class="font-['Inter'] font-bold text-[10px] uppercase tracking-[0.15em]">Convert</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#444650] p-2" href="mercado.html">
+<span class="material-symbols-outlined">paid</span>
+<span class="font-['Inter'] font-bold text-[10px] uppercase tracking-[0.15em]">Crypto</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#c0000c] p-2" href="#">
+<span class="material-symbols-outlined">analytics</span>
+<span class="font-['Inter'] font-bold text-[10px] uppercase tracking-[0.15em]">History</span>
+</a>
+</nav>
+
+<!-- Stale badge -->
+<div id="dfa-stale-badge" style="display:none" class="fixed bottom-20 right-4 md:bottom-4 bg-tertiary-fixed text-on-tertiary-fixed px-3 py-2 z-50 text-[10px] font-black uppercase tracking-widest">
+  Datos desactualizados
+</div>
+
+<!-- Shared JS -->
+<script src="js/utils.js"></script>
+<script src="js/api.js"></script>
+
+<script>
+(function () {
+  const { showError, showStale, hideError } = window.DFA;
+  const api = window.DFA_API;
+
+  let historialChart = null;
+  let activeDays = 7;
+  let currentBlueRate = 1;
+
+  // ─── Calculate 30D volatility from price array ───────────────────────────
+  function calcVolatility(prices) {
+    if (!prices || prices.length < 2) return null;
+    const values = prices.map(([, p]) => p);
+    const returns = [];
+    for (let i = 1; i < values.length; i++) {
+      returns.push(Math.log(values[i] / values[i - 1]));
+    }
+    const mean = returns.reduce((a, b) => a + b, 0) / returns.length;
+    const variance = returns.reduce((a, b) => a + Math.pow(b - mean, 2), 0) / returns.length;
+    return Math.sqrt(variance) * 100;
+  }
+
+  // ─── Format date label ────────────────────────────────────────────────────
+  function formatDateLabel(ts) {
+    return new Date(ts).toLocaleDateString('es-AR', { day: '2-digit', month: 'short' });
+  }
+
+  // ─── Render or update chart ───────────────────────────────────────────────
+  function renderChart(btcPrices, blueHistoryData) {
+    const canvas = document.getElementById('history-chart');
+    if (!canvas || !btcPrices || btcPrices.length < 2) return;
+
+    const labels = btcPrices.map(([ts]) => formatDateLabel(ts));
+    const btcValues = btcPrices.map(([, p]) => p);
+
+    let datasets;
+    let legendHtml;
+
+    // Filter only Blue entries (array contains both "Oficial" and "Blue" sources)
+    const blueOnly = blueHistoryData
+      ? blueHistoryData.filter(item => item.source === 'Blue')
+      : [];
+
+    if (blueOnly.length > 0) {
+      // Bluelytics returns newest-first; reverse to chronological
+      const blueReversed = [...blueOnly].reverse();
+
+      // Sample to match BTC data points
+      const blueValues = sampleToLength(blueReversed, btcPrices.length);
+
+      datasets = [
+        {
+          label: 'Dólar Blue (ARS)',
+          data: blueValues,
+          borderColor: '#330001',
+          borderWidth: 3,
+          fill: false,
+          pointRadius: 2,
+          tension: 0,
+          yAxisID: 'yLeft'
+        },
+        {
+          label: 'Bitcoin (USD)',
+          data: btcValues,
+          borderColor: '#1659c2',
+          borderWidth: 3,
+          fill: false,
+          pointRadius: 2,
+          tension: 0,
+          yAxisID: 'yRight'
+        }
+      ];
+
+      legendHtml = `
+        <div class="flex items-center space-x-2"><div class="w-3 h-3 bg-[#330001]"></div><span class="text-xs font-bold uppercase tracking-wider">Dólar Blue</span></div>
+        <div class="flex items-center space-x-2"><div class="w-3 h-3 bg-secondary"></div><span class="text-xs font-bold uppercase tracking-wider">Bitcoin (USD)</span></div>
+      `;
+    } else {
+      // Fallback: show BTC in ARS (left) and BTC in USD (right)
+      const btcArsValues = btcValues.map(p => p * currentBlueRate);
+
+      datasets = [
+        {
+          label: 'BTC en ARS',
+          data: btcArsValues,
+          borderColor: '#330001',
+          borderWidth: 3,
+          fill: false,
+          pointRadius: 2,
+          tension: 0,
+          yAxisID: 'yLeft'
+        },
+        {
+          label: 'BTC en USD',
+          data: btcValues,
+          borderColor: '#1659c2',
+          borderWidth: 3,
+          fill: false,
+          pointRadius: 2,
+          tension: 0,
+          yAxisID: 'yRight'
+        }
+      ];
+
+      legendHtml = `
+        <div class="flex items-center space-x-2"><div class="w-3 h-3 bg-[#330001]"></div><span class="text-xs font-bold uppercase tracking-wider">BTC en ARS</span></div>
+        <div class="flex items-center space-x-2"><div class="w-3 h-3 bg-secondary"></div><span class="text-xs font-bold uppercase tracking-wider">BTC en USD</span></div>
+      `;
+    }
+
+    // Update legend
+    const legendEl = document.getElementById('chart-legend');
+    if (legendEl) legendEl.innerHTML = legendHtml;
+
+    // Destroy previous chart
+    if (historialChart) {
+      historialChart.destroy();
+      historialChart = null;
+    }
+
+    historialChart = new Chart(canvas, {
+      type: 'line',
+      data: { labels, datasets },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        interaction: { mode: 'index', intersect: false },
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            callbacks: {
+              label: function(ctx) {
+                const val = ctx.parsed.y;
+                if (ctx.datasetIndex === 0) {
+                  return ctx.dataset.label + ': $' + val.toLocaleString('es-AR', { maximumFractionDigits: 0 });
+                } else {
+                  return ctx.dataset.label + ': u$s ' + val.toLocaleString('en-US', { maximumFractionDigits: 0 });
+                }
+              }
+            }
+          }
+        },
+        scales: {
+          x: {
+            ticks: {
+              font: { family: 'Inter', weight: '700', size: 10 },
+              color: '#757682',
+              maxTicksLimit: activeDays <= 7 ? 7 : (activeDays <= 30 ? 8 : 10)
+            },
+            grid: { color: 'rgba(117,118,130,0.1)' }
+          },
+          yLeft: {
+            type: 'linear',
+            position: 'left',
+            ticks: {
+              font: { family: 'Inter', weight: '700', size: 10 },
+              color: '#330001',
+              callback: v => '$' + Math.round(v).toLocaleString('es-AR')
+            },
+            grid: { color: 'rgba(117,118,130,0.08)' }
+          },
+          yRight: {
+            type: 'linear',
+            position: 'right',
+            ticks: {
+              font: { family: 'Inter', weight: '700', size: 10 },
+              color: '#1659c2',
+              callback: v => 'u$s ' + Math.round(v).toLocaleString('en-US')
+            },
+            grid: { drawOnChartArea: false }
+          }
+        }
+      }
+    });
+  }
+
+  // Helper: evenly sample array to target length
+  function sampleToLength(arr, targetLen) {
+    if (!arr || arr.length === 0) return [];
+    if (arr.length <= targetLen) return arr.map(item => item.value_sell || item.value_buy || 0);
+    const result = [];
+    for (let i = 0; i < targetLen; i++) {
+      const idx = Math.round(i * (arr.length - 1) / (targetLen - 1));
+      const item = arr[idx];
+      result.push(item.value_sell || item.value_buy || 0);
+    }
+    return result;
+  }
+
+  // ─── Load chart data for given days ──────────────────────────────────────
+  async function loadChart(days) {
+    setFilterActive(days);
+
+    try {
+      const [btcResult, blueResult] = await Promise.all([
+        api.getBtcHistory(days),
+        days === 7 ? api.getBlueHistory() : Promise.resolve(null) // Only fetch bluelytics once (7d default)
+      ]);
+
+      if (btcResult.stale) showStale();
+
+      const btcPrices = btcResult.data?.prices;
+
+      // For 30D/90D, try to use already-cached blue history
+      let blueData = null;
+      if (blueResult && blueResult.data) {
+        blueData = blueResult.data;
+      } else {
+        // Try cached blue history
+        try {
+          const cached = sessionStorage.getItem('dfa_blue_history');
+          if (cached) {
+            const parsed = JSON.parse(cached);
+            blueData = parsed.data;
+          }
+        } catch {}
+      }
+
+      renderChart(btcPrices, blueData);
+
+      // Update volatility metric if we have 30D data
+      if (days >= 30 && btcPrices) {
+        const vol = calcVolatility(btcPrices);
+        if (vol != null) {
+          const el = document.getElementById('metrics-volatilidad');
+          if (el) el.textContent = vol.toFixed(1) + '%';
+        }
+      }
+
+    } catch (err) {
+      showError('No se pudo cargar el historial.');
+      console.error('[DFA Historial]', err);
+    } finally {
+      enableFilterButtons();
+    }
+  }
+
+  // ─── Filter button state ──────────────────────────────────────────────────
+  function setFilterActive(days) {
+    [7, 30, 90].forEach(d => {
+      const btn = document.getElementById(`filter-${d}d`);
+      if (!btn) return;
+      if (d === days) {
+        btn.className = 'px-6 py-2 font-black text-sm uppercase tracking-widest filter-btn-active';
+      } else {
+        btn.className = 'px-6 py-2 font-bold text-sm uppercase tracking-widest filter-btn-inactive';
+      }
+    });
+  }
+
+  function disableFilterButtons() {
+    [7, 30, 90].forEach(d => {
+      const btn = document.getElementById(`filter-${d}d`);
+      if (btn) btn.disabled = true;
+    });
+  }
+
+  function enableFilterButtons() {
+    [7, 30, 90].forEach(d => {
+      const btn = document.getElementById(`filter-${d}d`);
+      if (btn) btn.disabled = false;
+    });
+  }
+
+  // ─── Main init ─────────────────────────────────────────────────────────────
+  async function initHistorial() {
+    hideError();
+
+    try {
+      // Get current blue rate for fallback ARS calculation
+      const dolaresResult = await api.getDolares();
+      if (dolaresResult.stale) showStale();
+      const blue = dolaresResult.byKey['blue'];
+      currentBlueRate = blue?.venta || 1;
+    } catch {}
+
+    await loadChart(7);
+
+    // Preload 30D data in background after initial render
+    setTimeout(() => api.getBtcHistory(30).catch(() => {}), 2000);
+  }
+
+  // ─── Wire filter buttons ───────────────────────────────────────────────────
+  document.addEventListener('DOMContentLoaded', () => {
+    [7, 30, 90].forEach(days => {
+      const btn = document.getElementById(`filter-${days}d`);
+      if (!btn) return;
+      btn.addEventListener('click', () => {
+        if (activeDays === days) return;
+        activeDays = days;
+        disableFilterButtons();
+        api.clearBtcHistory(days); // Always fetch fresh on explicit filter click
+        loadChart(days);
+      });
+    });
+
+    initHistorial();
+  });
+})();
+</script>
+</body></html>

@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+
+<html class="light" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>DÓLAR+CRYPTO | Conversor</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "on-tertiary-fixed": "#221b00",
+              "error-container": "#ffdad6",
+              "surface-container-lowest": "#ffffff",
+              "on-error": "#ffffff",
+              "secondary": "#1659c2",
+              "on-background": "#1c1b1b",
+              "primary-fixed": "#ffdad5",
+              "on-secondary-fixed-variant": "#00429a",
+              "tertiary-fixed": "#ffe16d",
+              "on-primary-container": "#ff5244",
+              "inverse-on-surface": "#f3f0ef",
+              "error": "#ba1a1a",
+              "on-secondary-container": "#002b6a",
+              "surface-variant": "#e5e2e1",
+              "on-primary-fixed-variant": "#930007",
+              "outline": "#757682",
+              "on-tertiary": "#ffffff",
+              "on-tertiary-fixed-variant": "#544600",
+              "tertiary-container": "#c9a900",
+              "outline-variant": "#c5c6d2",
+              "surface-tint": "#c0000c",
+              "surface-bright": "#fcf9f8",
+              "primary-container": "#5a0002",
+              "primary": "#330001",
+              "on-secondary-fixed": "#001944",
+              "on-secondary": "#ffffff",
+              "tertiary": "#705d00",
+              "surface-dim": "#dcd9d9",
+              "on-error-container": "#93000a",
+              "on-primary": "#ffffff",
+              "on-surface-variant": "#444650",
+              "inverse-primary": "#ffb4aa",
+              "surface-container-highest": "#e5e2e1",
+              "secondary-fixed": "#d9e2ff",
+              "surface-container": "#f0eded",
+              "on-surface": "#1c1b1b",
+              "surface-container-high": "#eae7e7",
+              "tertiary-fixed-dim": "#e9c400",
+              "secondary-fixed-dim": "#b0c6ff",
+              "surface": "#fcf9f8",
+              "inverse-surface": "#313030",
+              "background": "#fcf9f8",
+              "on-primary-fixed": "#410001",
+              "secondary-container": "#5f93ff",
+              "surface-container-low": "#f6f3f2",
+              "primary-fixed-dim": "#ffb4aa",
+              "on-tertiary-container": "#4c3f00"
+            },
+            fontFamily: {
+              "headline": ["Inter"],
+              "body": ["Inter"],
+              "label": ["Inter"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body { font-family: 'Inter', sans-serif; }
+        .vignelli-reveal { border-left: 4px solid #330001; }
+    </style>
+</head>
+<body class="bg-background text-on-background min-h-screen flex flex-col md:flex-row">
+
+<!-- Error Banner -->
+<div id="dfa-error-banner" style="display:none" class="bg-error-container text-on-error-container px-6 py-3 flex items-center gap-4 fixed top-0 left-0 w-full z-[60]">
+  <span class="material-symbols-outlined text-sm">warning</span>
+  <span class="font-bold text-xs uppercase tracking-widest">Error al cargar datos</span>
+  <span id="dfa-error-message" class="text-sm font-medium"></span>
+</div>
+
+<!-- SideNavBar (Desktop) -->
+<aside class="hidden md:flex flex-col w-64 h-screen sticky top-0 bg-[#fcf9f8] border-r-4 border-[#330001]">
+<div class="p-8">
+<h1 class="text-xl font-black text-[#330001] tracking-tighter uppercase">DÓLAR+CRYPTO</h1>
+</div>
+<nav class="flex-1">
+<div class="px-4 py-2">
+<p class="font-bold uppercase tracking-[0.15em] text-[12px] text-[#444650] mb-4 px-4">ESTADÍSTICAS</p>
+<ul class="space-y-1">
+<li>
+<a class="text-[#330001] p-4 flex items-center gap-4 hover:translate-x-1 transition-transform duration-200" href="index.html">
+<span class="material-symbols-outlined">grid_view</span>
+<span class="font-bold uppercase tracking-[0.15em] text-[12px]">Resumen</span>
+</a>
+</li>
+<li>
+<a class="bg-[#330001] text-white p-4 flex items-center gap-4" href="#">
+<span class="material-symbols-outlined">currency_exchange</span>
+<span class="font-bold uppercase tracking-[0.15em] text-[12px]">Conversor</span>
+</a>
+</li>
+<li>
+<a class="text-[#330001] p-4 flex items-center gap-4 hover:translate-x-1 transition-transform duration-200" href="mercado.html">
+<span class="material-symbols-outlined">currency_bitcoin</span>
+<span class="font-bold uppercase tracking-[0.15em] text-[12px]">Mercado</span>
+</a>
+</li>
+<li>
+<a class="text-[#330001] p-4 flex items-center gap-4 hover:translate-x-1 transition-transform duration-200" href="historial.html">
+<span class="material-symbols-outlined">timeline</span>
+<span class="font-bold uppercase tracking-[0.15em] text-[12px]">Historial</span>
+</a>
+</li>
+</ul>
+</div>
+</nav>
+<div class="p-8 border-t-2 border-[#330001]/10">
+<p class="font-bold uppercase tracking-[0.15em] text-[10px] text-outline">FINANZAS ARGENTINAS</p>
+</div>
+</aside>
+
+<!-- Main Stage -->
+<main class="flex-1 flex flex-col min-h-screen bg-surface-container-low">
+<!-- TopAppBar -->
+<header class="bg-[#fcf9f8] border-b-4 border-[#330001] w-full">
+<div class="flex justify-between items-center w-full px-6 py-4 max-w-7xl mx-auto">
+<div class="flex items-center gap-4">
+<span class="md:hidden text-2xl font-black tracking-tighter text-[#330001]">D+C</span>
+<h2 class="font-['Inter'] font-black tracking-tighter uppercase text-[#c0000c] text-lg">Conversor Inteligente</h2>
+</div>
+<div class="flex gap-4">
+<button class="p-2 hover:bg-zinc-200 transition-colors active:scale-95 duration-100">
+<span class="material-symbols-outlined">account_balance_wallet</span>
+</button>
+<button class="p-2 hover:bg-zinc-200 transition-colors active:scale-95 duration-100">
+<span class="material-symbols-outlined">settings</span>
+</button>
+</div>
+</div>
+</header>
+
+<!-- Content Canvas -->
+<section class="p-6 md:p-12 max-w-7xl mx-auto w-full">
+<!-- Hero Conversion Input -->
+<div class="bg-surface-container-lowest p-8 md:p-16 border-b-4 border-primary mb-12">
+<div class="max-w-4xl mx-auto space-y-12">
+<div class="flex flex-col md:flex-row md:items-end gap-8">
+<div class="flex-1">
+<label class="block font-bold uppercase tracking-[0.15em] text-[12px] text-outline mb-4">Monto a Convertir</label>
+<div class="relative group">
+<span class="absolute left-0 bottom-4 text-4xl font-black text-primary">$</span>
+<input id="amount-input" class="w-full bg-transparent border-b-2 border-outline focus:border-secondary outline-none py-4 pl-10 text-6xl md:text-8xl font-black tracking-tighter text-on-background transition-all placeholder:opacity-20" placeholder="0.00" type="number" min="0" inputmode="decimal"/>
+</div>
+</div>
+<div class="flex gap-4 pb-2">
+<button id="direction-toggle" class="h-14 px-8 bg-primary text-on-primary font-bold uppercase tracking-widest text-xs flex items-center gap-2 active:scale-95 transition-transform">
+  ARS <span class="material-symbols-outlined text-sm">swap_horiz</span> USD
+</button>
+<button id="clear-btn" class="h-14 w-14 border-2 border-primary text-primary flex items-center justify-center hover:bg-primary hover:text-white transition-colors">
+<span class="material-symbols-outlined">close</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+
+<!-- Results Grid -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-0">
+<!-- Fiat Dollars Column -->
+<div class="md:col-span-2 space-y-0">
+<div class="bg-surface-container-high p-4 border-l-4 border-secondary">
+<p class="font-bold uppercase tracking-[0.2em] text-[10px] text-secondary">Mercado de Divisas</p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-0 border-r-2 border-outline-variant/30">
+
+<!-- Card: Blue -->
+<div class="bg-surface-container-lowest p-8 border-b-2 border-r-2 border-outline-variant/20 hover:bg-surface-container transition-colors group">
+<div class="flex justify-between items-start mb-8">
+<span class="font-black text-2xl tracking-tighter">Dólar Blue</span>
+<span id="badge-blue" class="bg-outline-variant text-on-surface-variant px-2 py-1 text-[10px] font-bold uppercase">TC: —</span>
+</div>
+<div class="space-y-1">
+<p id="result-blue" class="text-4xl font-black tracking-tighter text-primary">—</p>
+<p id="rate-blue" class="text-xs font-bold uppercase tracking-widest text-outline">—</p>
+</div>
+</div>
+
+<!-- Card: MEP -->
+<div class="bg-surface-container-lowest p-8 border-b-2 border-outline-variant/20 hover:bg-surface-container transition-colors group">
+<div class="flex justify-between items-start mb-8">
+<span class="font-black text-2xl tracking-tighter">Dólar MEP</span>
+<span id="badge-mep" class="bg-outline-variant text-on-surface-variant px-2 py-1 text-[10px] font-bold uppercase">TC: —</span>
+</div>
+<div class="space-y-1">
+<p id="result-mep" class="text-4xl font-black tracking-tighter text-primary">—</p>
+<p id="rate-mep" class="text-xs font-bold uppercase tracking-widest text-outline">—</p>
+</div>
+</div>
+
+<!-- Card: CCL -->
+<div class="bg-surface-container-lowest p-8 border-b-2 border-r-2 border-outline-variant/20 hover:bg-surface-container transition-colors group">
+<div class="flex justify-between items-start mb-8">
+<span class="font-black text-2xl tracking-tighter">Dólar CCL</span>
+<span id="badge-ccl" class="bg-outline-variant text-on-surface-variant px-2 py-1 text-[10px] font-bold uppercase">TC: —</span>
+</div>
+<div class="space-y-1">
+<p id="result-ccl" class="text-4xl font-black tracking-tighter text-primary">—</p>
+<p id="rate-ccl" class="text-xs font-bold uppercase tracking-widest text-outline">—</p>
+</div>
+</div>
+
+<!-- Card: Tarjeta -->
+<div class="bg-surface-container-lowest p-8 border-b-2 border-outline-variant/20 hover:bg-surface-container transition-colors group">
+<div class="flex justify-between items-start mb-8">
+<span class="font-black text-2xl tracking-tighter">Dólar Tarjeta</span>
+<span id="badge-tarjeta" class="bg-outline-variant text-on-surface-variant px-2 py-1 text-[10px] font-bold uppercase">TC: —</span>
+</div>
+<div class="space-y-1">
+<p id="result-tarjeta" class="text-4xl font-black tracking-tighter text-primary">—</p>
+<p id="rate-tarjeta" class="text-xs font-bold uppercase tracking-widest text-outline">—</p>
+</div>
+</div>
+
+</div>
+</div>
+
+<!-- Crypto Column -->
+<div class="space-y-0">
+<div class="bg-primary p-4 border-l-4 border-tertiary-fixed">
+<p class="font-bold uppercase tracking-[0.2em] text-[10px] text-tertiary-fixed">Activos Digitales</p>
+</div>
+<div class="flex flex-col h-full border-l-2 border-outline-variant/30">
+
+<!-- Crypto Card: BTC -->
+<div class="bg-surface-container-lowest p-8 border-b-2 border-outline-variant/20 flex-1 hover:bg-surface-container transition-colors">
+<div class="flex items-center gap-3 mb-6">
+<span class="material-symbols-outlined text-tertiary font-bold" style="font-variation-settings: 'FILL' 1;">currency_bitcoin</span>
+<span class="font-black text-xl tracking-tighter">Bitcoin</span>
+</div>
+<p id="result-btc" class="text-4xl font-black tracking-tighter text-on-background">—</p>
+<p id="rate-btc" class="text-[10px] font-bold uppercase tracking-widest text-outline mt-2">—</p>
+</div>
+
+<!-- Crypto Card: ETH -->
+<div class="bg-surface-container-lowest p-8 border-b-2 border-outline-variant/20 flex-1 hover:bg-surface-container transition-colors">
+<div class="flex items-center gap-3 mb-6">
+<span class="material-symbols-outlined text-secondary font-bold">diamond</span>
+<span class="font-black text-xl tracking-tighter">Ethereum</span>
+</div>
+<p id="result-eth" class="text-4xl font-black tracking-tighter text-on-background">—</p>
+<p id="rate-eth" class="text-[10px] font-bold uppercase tracking-widest text-outline mt-2">—</p>
+</div>
+
+<!-- Crypto Card: USDT -->
+<div class="bg-surface-container-lowest p-8 border-b-2 border-outline-variant/20 flex-1 hover:bg-surface-container transition-colors">
+<div class="flex items-center gap-3 mb-6">
+<span class="material-symbols-outlined text-emerald-600 font-bold" style="font-variation-settings: 'FILL' 1;">monetization_on</span>
+<span class="font-black text-xl tracking-tighter">USDT Tether</span>
+</div>
+<p id="result-usdt" class="text-4xl font-black tracking-tighter text-on-background">—</p>
+<p id="rate-usdt" class="text-[10px] font-bold uppercase tracking-widest text-outline mt-2">—</p>
+</div>
+
+</div>
+</div>
+</div>
+</section>
+</main>
+
+<!-- BottomNavBar (Mobile) -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full z-50 bg-[#fcf9f8]/80 backdrop-blur-xl border-t-2 border-[#330001] flex justify-around items-center px-4 pb-6 pt-2">
+<a class="flex flex-col items-center justify-center text-[#444650] p-2" href="index.html">
+<span class="material-symbols-outlined">home</span>
+<span class="font-['Inter'] font-bold text-[10px] uppercase tracking-widest mt-1">Home</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#c0000c] p-2 scale-110" href="#">
+<span class="material-symbols-outlined">sync_alt</span>
+<span class="font-['Inter'] font-bold text-[10px] uppercase tracking-widest mt-1">Convert</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#444650] p-2" href="mercado.html">
+<span class="material-symbols-outlined">paid</span>
+<span class="font-['Inter'] font-bold text-[10px] uppercase tracking-widest mt-1">Crypto</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#444650] p-2" href="historial.html">
+<span class="material-symbols-outlined">analytics</span>
+<span class="font-['Inter'] font-bold text-[10px] uppercase tracking-widest mt-1">History</span>
+</a>
+</nav>
+
+<!-- Decorative grid background -->
+<div class="fixed inset-0 pointer-events-none opacity-[0.03] z-[-1]" style="background-image: radial-gradient(#330001 1px, transparent 1px); background-size: 32px 32px;"></div>
+
+<!-- Shared JS -->
+<script src="js/utils.js"></script>
+<script src="js/api.js"></script>
+
+<script>
+(function () {
+  const { formatARS, formatUSD, formatBTC, formatETH, showError, showStale, hideError } = window.DFA;
+  const api = window.DFA_API;
+
+  // State
+  let direction = 'ARS_TO_USD'; // or 'USD_TO_ARS'
+  let rates = null;       // byKey from getDolares
+  let cryptoPrices = null; // from getCryptoPrice
+
+  // ─── Set element text ────────────────────────────────────────────────────
+  function setEl(id, text) {
+    const el = document.getElementById(id);
+    if (el) el.textContent = text;
+  }
+
+  // ─── Populate rate badges & TC labels once data loads ───────────────────
+  function populateRateLabels() {
+    if (!rates) return;
+    const blue    = rates['blue'];
+    const bolsa   = rates['bolsa'];
+    const ccl     = rates['contadoconliqui'];
+    const tarjeta = rates['tarjeta'];
+
+    if (blue)    setEl('badge-blue',    'TC: ' + (blue.venta    || '—'));
+    if (bolsa)   setEl('badge-mep',     'TC: ' + (bolsa.venta   || '—'));
+    if (ccl)     setEl('badge-ccl',     'TC: ' + (ccl.venta     || '—'));
+    if (tarjeta) setEl('badge-tarjeta', 'TC: ' + (tarjeta.venta || '—'));
+
+    if (cryptoPrices) {
+      const btcUsd = cryptoPrices.bitcoin?.usd;
+      const ethUsd = cryptoPrices.ethereum?.usd;
+      if (btcUsd) setEl('rate-btc', 'Precio: u$s ' + btcUsd.toLocaleString('en-US'));
+      if (ethUsd) setEl('rate-eth', 'Precio: u$s ' + ethUsd.toLocaleString('en-US'));
+      setEl('rate-usdt', 'Referencia: Cripto Dólar');
+    }
+  }
+
+  // ─── Perform calculation ─────────────────────────────────────────────────
+  function calculate() {
+    const input = parseFloat(document.getElementById('amount-input').value);
+
+    if (!rates || !cryptoPrices || isNaN(input) || input <= 0) {
+      // Clear results
+      ['result-blue','result-mep','result-ccl','result-tarjeta',
+       'result-btc','result-eth','result-usdt',
+       'rate-blue','rate-mep','rate-ccl','rate-tarjeta'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el && el.id.startsWith('result-')) el.textContent = '—';
+      });
+      return;
+    }
+
+    const blue    = rates['blue'];
+    const bolsa   = rates['bolsa'];
+    const ccl     = rates['contadoconliqui'];
+    const tarjeta = rates['tarjeta'];
+    const cripto  = rates['cripto'];
+    const btcUsd  = cryptoPrices.bitcoin?.usd  || 0;
+    const ethUsd  = cryptoPrices.ethereum?.usd || 0;
+    const usdtRef = cripto?.venta || blue?.venta || 1;
+
+    if (direction === 'ARS_TO_USD') {
+      // Input is ARS → show how much USD / crypto you get
+      if (blue)    setEl('result-blue',    formatUSD(input / blue.venta));
+      if (bolsa)   setEl('result-mep',     formatUSD(input / bolsa.venta));
+      if (ccl)     setEl('result-ccl',     formatUSD(input / ccl.venta));
+      if (tarjeta) setEl('result-tarjeta', formatUSD(input / tarjeta.venta));
+
+      // Crypto via blue rate
+      const usdViaBlue = blue ? input / blue.venta : 0;
+      if (btcUsd) setEl('result-btc',  formatBTC(usdViaBlue / btcUsd));
+      if (ethUsd) setEl('result-eth',  formatETH(usdViaBlue / ethUsd));
+      setEl('result-usdt', formatUSD(input / usdtRef));
+
+      // Rate subtexts
+      if (blue)    setEl('rate-blue',    'Comprás a ' + formatARS(blue.venta) + ' / ARS');
+      if (bolsa)   setEl('rate-mep',     'Comprás a ' + formatARS(bolsa.venta) + ' / ARS');
+      if (ccl)     setEl('rate-ccl',     'Comprás a ' + formatARS(ccl.venta) + ' / ARS');
+      if (tarjeta) setEl('rate-tarjeta', 'Comprás a ' + formatARS(tarjeta.venta) + ' / ARS');
+      setEl('rate-usdt', 'Vía cripto dólar');
+
+    } else {
+      // Input is USD → show ARS equivalent at each rate
+      if (blue)    setEl('result-blue',    formatARS(input * blue.venta));
+      if (bolsa)   setEl('result-mep',     formatARS(input * bolsa.venta));
+      if (ccl)     setEl('result-ccl',     formatARS(input * ccl.venta));
+      if (tarjeta) setEl('result-tarjeta', formatARS(input * tarjeta.venta));
+
+      // Crypto: USD → ARS via blue
+      const arsPerUsd = blue?.venta || 1;
+      if (btcUsd) {
+        const btcAmt = input / btcUsd;
+        const arsVal = btcAmt * btcUsd * arsPerUsd;
+        setEl('result-btc', formatARS(arsVal));
+      }
+      if (ethUsd) {
+        setEl('result-eth', formatARS(input * arsPerUsd));
+      }
+      setEl('result-usdt', formatARS(input * usdtRef));
+
+      // Rate subtexts
+      if (blue)    setEl('rate-blue',    'Vendés a ' + formatARS(blue.venta) + ' / USD');
+      if (bolsa)   setEl('rate-mep',     'Vendés a ' + formatARS(bolsa.venta) + ' / USD');
+      if (ccl)     setEl('rate-ccl',     'Vendés a ' + formatARS(ccl.venta) + ' / USD');
+      if (tarjeta) setEl('rate-tarjeta', 'Vendés a ' + formatARS(tarjeta.venta) + ' / USD');
+      setEl('rate-usdt', 'Vía cripto dólar');
+    }
+  }
+
+  // ─── Toggle direction ─────────────────────────────────────────────────────
+  function updateToggleLabel() {
+    const btn = document.getElementById('direction-toggle');
+    if (!btn) return;
+    if (direction === 'ARS_TO_USD') {
+      btn.innerHTML = 'ARS <span class="material-symbols-outlined text-sm">swap_horiz</span> USD';
+    } else {
+      btn.innerHTML = 'USD <span class="material-symbols-outlined text-sm">swap_horiz</span> ARS';
+    }
+  }
+
+  // ─── Main init ────────────────────────────────────────────────────────────
+  async function initConversor() {
+    hideError();
+    try {
+      const [dolaresResult, cryptoResult] = await Promise.all([
+        api.getDolares(),
+        api.getCryptoPrice()
+      ]);
+
+      if (dolaresResult.stale || cryptoResult.stale) showStale();
+
+      rates = dolaresResult.byKey;
+      cryptoPrices = cryptoResult.data;
+
+      populateRateLabels();
+      calculate();
+
+    } catch (err) {
+      showError('No se pudieron cargar las cotizaciones.');
+      console.error('[DFA Conversor]', err);
+    }
+  }
+
+  // ─── Wire events ─────────────────────────────────────────────────────────
+  document.addEventListener('DOMContentLoaded', () => {
+    const input = document.getElementById('amount-input');
+    const toggle = document.getElementById('direction-toggle');
+    const clearBtn = document.getElementById('clear-btn');
+
+    if (input)    input.addEventListener('input', calculate);
+    if (toggle)   toggle.addEventListener('click', () => {
+      direction = direction === 'ARS_TO_USD' ? 'USD_TO_ARS' : 'ARS_TO_USD';
+      updateToggleLabel();
+      calculate();
+    });
+    if (clearBtn) clearBtn.addEventListener('click', () => {
+      if (input) { input.value = ''; input.focus(); }
+      calculate();
+    });
+
+    initConversor();
+  });
+})();
+</script>
+</body></html>

@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+
+<html class="light" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>DÓLAR+CRYPTO | Mercado</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "on-tertiary-fixed": "#221b00",
+              "error-container": "#ffdad6",
+              "surface-container-lowest": "#ffffff",
+              "on-error": "#ffffff",
+              "secondary": "#1659c2",
+              "on-background": "#1c1b1b",
+              "primary-fixed": "#ffdad5",
+              "on-secondary-fixed-variant": "#00429a",
+              "tertiary-fixed": "#ffe16d",
+              "on-primary-container": "#ff5244",
+              "inverse-on-surface": "#f3f0ef",
+              "error": "#ba1a1a",
+              "on-secondary-container": "#002b6a",
+              "surface-variant": "#e5e2e1",
+              "on-primary-fixed-variant": "#930007",
+              "outline": "#757682",
+              "on-tertiary": "#ffffff",
+              "on-tertiary-fixed-variant": "#544600",
+              "tertiary-container": "#c9a900",
+              "outline-variant": "#c5c6d2",
+              "surface-tint": "#c0000c",
+              "surface-bright": "#fcf9f8",
+              "primary-container": "#5a0002",
+              "primary": "#330001",
+              "on-secondary-fixed": "#001944",
+              "on-secondary": "#ffffff",
+              "tertiary": "#705d00",
+              "surface-dim": "#dcd9d9",
+              "on-error-container": "#93000a",
+              "on-primary": "#ffffff",
+              "on-surface-variant": "#444650",
+              "inverse-primary": "#ffb4aa",
+              "surface-container-highest": "#e5e2e1",
+              "secondary-fixed": "#d9e2ff",
+              "surface-container": "#f0eded",
+              "on-surface": "#1c1b1b",
+              "surface-container-high": "#eae7e7",
+              "tertiary-fixed-dim": "#e9c400",
+              "secondary-fixed-dim": "#b0c6ff",
+              "surface": "#fcf9f8",
+              "inverse-surface": "#313030",
+              "background": "#fcf9f8",
+              "on-primary-fixed": "#410001",
+              "secondary-container": "#5f93ff",
+              "surface-container-low": "#f6f3f2",
+              "primary-fixed-dim": "#ffb4aa",
+              "on-tertiary-container": "#4c3f00"
+            },
+            fontFamily: {
+              "headline": ["Inter"],
+              "body": ["Inter"],
+              "label": ["Inter"]
+            },
+            borderRadius: {"DEFAULT": "0px", "lg": "0px", "xl": "0px", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body { font-family: 'Inter', sans-serif; }
+    </style>
+</head>
+<body class="bg-background text-on-surface selection:bg-primary selection:text-white">
+
+<!-- Error Banner -->
+<div id="dfa-error-banner" style="display:none" class="bg-error-container text-on-error-container px-6 py-3 flex items-center gap-4 sticky top-0 z-[60]">
+  <span class="material-symbols-outlined text-sm">warning</span>
+  <span class="font-bold text-xs uppercase tracking-widest">Error al cargar datos</span>
+  <span id="dfa-error-message" class="text-sm font-medium"></span>
+</div>
+
+<!-- TopNavBar -->
+<nav class="bg-[#fcf9f8] dark:bg-zinc-950 docked full-width top-0 border-b-4 border-[#330001] dark:border-zinc-800 z-50 sticky">
+<div class="flex justify-between items-center w-full px-6 py-4 max-w-7xl mx-auto">
+<div class="text-2xl font-black tracking-tighter text-[#330001] dark:text-zinc-100 font-['Inter'] uppercase">
+                DÓLAR+CRYPTO
+            </div>
+<div class="hidden md:flex items-center gap-8">
+<a class="text-[#444650] dark:text-zinc-400 font-medium font-['Inter'] font-black tracking-tighter uppercase hover:bg-zinc-200 dark:hover:bg-zinc-800 transition-colors px-2 py-1" href="index.html">Resumen</a>
+<a class="text-[#444650] dark:text-zinc-400 font-medium font-['Inter'] font-black tracking-tighter uppercase hover:bg-zinc-200 dark:hover:bg-zinc-800 transition-colors px-2 py-1" href="conversor.html">Conversor</a>
+<a class="text-[#c0000c] dark:text-[#ef4444] font-bold border-b-2 border-[#c0000c] font-['Inter'] font-black tracking-tighter uppercase px-2 py-1" href="#">Mercado</a>
+<a class="text-[#444650] dark:text-zinc-400 font-medium font-['Inter'] font-black tracking-tighter uppercase hover:bg-zinc-200 dark:hover:bg-zinc-800 transition-colors px-2 py-1" href="historial.html">Historial</a>
+</div>
+<div class="flex items-center gap-4">
+<button class="p-2 hover:bg-zinc-200 dark:hover:bg-zinc-800 transition-colors active:scale-95 duration-100">
+<span class="material-symbols-outlined text-[#330001] dark:text-zinc-100">account_balance_wallet</span>
+</button>
+<button class="p-2 hover:bg-zinc-200 dark:hover:bg-zinc-800 transition-colors active:scale-95 duration-100">
+<span class="material-symbols-outlined text-[#330001] dark:text-zinc-100">settings</span>
+</button>
+</div>
+</div>
+</nav>
+
+<div class="flex max-w-7xl mx-auto">
+<!-- SideNavBar (Hidden on Mobile) -->
+<aside class="hidden md:flex flex-col w-64 h-screen sticky top-[72px] bg-[#fcf9f8] dark:bg-zinc-900 docked left-0 border-r-4 border-[#330001] dark:border-zinc-800 py-8">
+<div class="px-6 mb-10">
+<h2 class="font-['Inter'] font-bold uppercase tracking-[0.15em] text-[12px] text-[#c0000c] mb-1">ESTADÍSTICAS</h2>
+<p class="font-['Inter'] font-bold uppercase tracking-[0.15em] text-[10px] text-outline">FINANZAS ARGENTINAS</p>
+</div>
+<nav class="flex flex-col">
+<a class="text-[#330001] dark:text-zinc-300 p-6 flex items-center gap-4 hover:translate-x-1 transition-transform duration-200 hover:bg-zinc-100 dark:hover:bg-zinc-800" href="index.html">
+<span class="material-symbols-outlined">grid_view</span>
+<span class="font-['Inter'] font-bold uppercase tracking-[0.15em] text-[12px]">Resumen</span>
+</a>
+<a class="text-[#330001] dark:text-zinc-300 p-6 flex items-center gap-4 hover:translate-x-1 transition-transform duration-200 hover:bg-zinc-100 dark:hover:bg-zinc-800" href="conversor.html">
+<span class="material-symbols-outlined">currency_exchange</span>
+<span class="font-['Inter'] font-bold uppercase tracking-[0.15em] text-[12px]">Conversor</span>
+</a>
+<a class="bg-[#330001] text-white dark:bg-zinc-100 dark:text-black p-6 flex items-center gap-4" href="#">
+<span class="material-symbols-outlined">currency_bitcoin</span>
+<span class="font-['Inter'] font-bold uppercase tracking-[0.15em] text-[12px]">Mercado</span>
+</a>
+<a class="text-[#330001] dark:text-zinc-300 p-6 flex items-center gap-4 hover:translate-x-1 transition-transform duration-200 hover:bg-zinc-100 dark:hover:bg-zinc-800" href="historial.html">
+<span class="material-symbols-outlined">timeline</span>
+<span class="font-['Inter'] font-bold uppercase tracking-[0.15em] text-[12px]">Historial</span>
+</a>
+</nav>
+</aside>
+
+<!-- Main Content -->
+<main class="flex-1 bg-surface-container-low min-h-screen p-6 md:p-12">
+<!-- Hero Header -->
+<header class="mb-12">
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-6">
+<div>
+<span class="inline-block bg-primary text-white px-3 py-1 text-[10px] font-bold tracking-widest uppercase mb-4">Live Market Data</span>
+<h1 class="text-6xl md:text-8xl font-black tracking-tighter text-primary leading-none uppercase">Crypto<br/>Market</h1>
+</div>
+<div class="bg-surface-container-lowest border-l-8 border-secondary p-6 flex flex-col justify-between">
+<span class="text-[10px] font-bold uppercase tracking-widest text-outline mb-2">Dólar Blue Ref.</span>
+<div id="blue-ref-price" class="text-4xl font-black tracking-tight text-secondary">—</div>
+<span id="blue-ref-updated" class="text-[10px] font-bold text-secondary uppercase mt-2">Cargando...</span>
+</div>
+</div>
+</header>
+
+<!-- Market Table Section -->
+<section class="bg-surface-container-lowest overflow-hidden">
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="border-b-4 border-primary">
+<th class="p-6 text-[10px] font-black uppercase tracking-widest text-primary">#</th>
+<th class="p-6 text-[10px] font-black uppercase tracking-widest text-primary">Activo</th>
+<th class="p-6 text-[10px] font-black uppercase tracking-widest text-primary text-right">Precio USD</th>
+<th class="p-6 text-[10px] font-black uppercase tracking-widest text-primary text-right">Precio ARS (Blue)</th>
+<th class="p-6 text-[10px] font-black uppercase tracking-widest text-primary text-right">Var. 24h</th>
+<th class="p-6 text-[10px] font-black uppercase tracking-widest text-primary text-right hidden lg:table-cell">Market Cap</th>
+</tr>
+</thead>
+<tbody id="crypto-table-body" class="divide-y-4 divide-surface-container">
+<!-- Rows generated by JS -->
+</tbody>
+</table>
+</div>
+</section>
+
+<!-- Grid Layout for Additional Data -->
+<section class="mt-12 grid grid-cols-1 md:grid-cols-3 gap-8">
+<div class="bg-primary text-white p-8">
+<h3 class="font-['Inter'] font-black uppercase tracking-[0.2em] text-[10px] mb-8">Dominancia</h3>
+<div class="flex items-end gap-4 mb-4">
+<span id="btc-dominance" class="text-6xl font-black tracking-tighter">—</span>
+<span class="text-xs font-bold uppercase mb-2 tracking-widest text-on-primary-container">Bitcoin</span>
+</div>
+<div class="w-full bg-primary-container h-2">
+<div id="dominance-bar" class="bg-white h-full" style="width:0%"></div>
+</div>
+</div>
+<div class="bg-surface-container-lowest border-4 border-primary p-8">
+<h3 class="font-['Inter'] font-black uppercase tracking-[0.2em] text-[10px] text-primary mb-8">Volumen 24h</h3>
+<div id="volume-24h" class="text-5xl font-black tracking-tighter text-primary">—</div>
+<div class="mt-4 flex items-center gap-2 text-secondary font-bold text-xs uppercase tracking-widest">
+<span class="material-symbols-outlined text-sm">trending_up</span>
+<span id="volume-label">Global crypto market</span>
+</div>
+</div>
+<div class="bg-secondary text-white p-8">
+<h3 class="font-['Inter'] font-black uppercase tracking-[0.2em] text-[10px] mb-8">Miedo/Codicia</h3>
+<div class="flex items-center justify-between">
+<div id="fear-greed-value" class="text-6xl font-black tracking-tighter">—</div>
+<div class="text-right">
+<div class="text-xs font-black uppercase tracking-widest opacity-80">Sentiment</div>
+<div id="fear-greed-label" class="text-xl font-black uppercase tracking-tight">—</div>
+</div>
+</div>
+</div>
+</section>
+</main>
+</div>
+
+<!-- BottomNavBar (Visible on Mobile) -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 pb-6 pt-2 md:hidden bg-[#fcf9f8]/80 dark:bg-zinc-950/80 backdrop-blur-xl border-t-2 border-[#330001] dark:border-zinc-800">
+<a class="flex flex-col items-center justify-center text-[#444650] dark:text-zinc-500 p-2 font-['Inter'] font-bold text-[10px] uppercase tracking-widest" href="index.html">
+<span class="material-symbols-outlined">home</span>
+<span>Home</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#444650] dark:text-zinc-500 p-2 font-['Inter'] font-bold text-[10px] uppercase tracking-widest" href="conversor.html">
+<span class="material-symbols-outlined">sync_alt</span>
+<span>Convert</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#c0000c] dark:text-[#ef4444] p-2 scale-110 font-['Inter'] font-bold text-[10px] uppercase tracking-widest" href="#">
+<span class="material-symbols-outlined">paid</span>
+<span>Crypto</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#444650] dark:text-zinc-500 p-2 font-['Inter'] font-bold text-[10px] uppercase tracking-widest" href="historial.html">
+<span class="material-symbols-outlined">analytics</span>
+<span>History</span>
+</a>
+</nav>
+
+<!-- Shared JS -->
+<script src="js/utils.js"></script>
+<script src="js/api.js"></script>
+
+<script>
+(function () {
+  const { formatARS, formatMarketCap, changeClass, changeIcon, showTableSkeletons, showError, showStale, hideError } = window.DFA;
+  const api = window.DFA_API;
+
+  function setEl(id, text) {
+    const el = document.getElementById(id);
+    if (el) el.textContent = text;
+  }
+
+  // ─── Build one table row ─────────────────────────────────────────────────
+  function buildRow(coin, index, blueRate) {
+    const change = coin.price_change_percentage_24h || 0;
+    const colorClass = changeClass(change);
+    const icon = changeIcon(change);
+    const ticker = coin.symbol.toUpperCase().substring(0, 5);
+    const arsPrice = coin.current_price * blueRate;
+
+    const usdFormatted = '$' + coin.current_price.toLocaleString('en-US', {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: coin.current_price < 1 ? 6 : 2
+    });
+
+    return `<tr class="hover:bg-surface-container-high transition-colors group">
+      <td class="p-6 font-black text-outline">${String(index + 1).padStart(2, '0')}</td>
+      <td class="p-6">
+        <div class="flex items-center gap-4">
+          <div class="w-10 h-10 bg-primary flex items-center justify-center text-white font-black text-[10px]">${ticker}</div>
+          <div>
+            <div class="font-black text-lg uppercase tracking-tight">${escapeHtml(coin.name)}</div>
+            <div class="text-[10px] font-bold text-outline tracking-widest">${ticker}/USD</div>
+          </div>
+        </div>
+      </td>
+      <td class="p-6 text-right font-black text-xl tracking-tighter">${usdFormatted}</td>
+      <td class="p-6 text-right font-bold text-secondary tracking-tighter">${formatARS(arsPrice)}</td>
+      <td class="p-6 text-right">
+        <div class="inline-flex items-center gap-1 font-black ${colorClass}">
+          <span class="material-symbols-outlined text-sm">${icon}</span>
+          <span>${Math.abs(change).toFixed(2)}%</span>
+        </div>
+      </td>
+      <td class="p-6 text-right hidden lg:table-cell font-medium text-outline">${formatMarketCap(coin.market_cap)}</td>
+    </tr>`;
+  }
+
+  function escapeHtml(str) {
+    return String(str)
+      .replace(/&/g,'&amp;').replace(/</g,'&lt;')
+      .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  // ─── Render full table ───────────────────────────────────────────────────
+  function renderTable(coins, blueRate) {
+    const tbody = document.getElementById('crypto-table-body');
+    if (!tbody) return;
+    tbody.innerHTML = coins.map((c, i) => buildRow(c, i, blueRate)).join('');
+  }
+
+  // ─── Populate stat cards ─────────────────────────────────────────────────
+  function populateGlobal(globalData) {
+    const d = globalData?.data;
+    if (!d) return;
+    const btcDom = d.market_cap_percentage?.btc;
+    const vol = d.total_volume?.usd;
+
+    if (btcDom != null) {
+      setEl('btc-dominance', btcDom.toFixed(1) + '%');
+      const bar = document.getElementById('dominance-bar');
+      if (bar) bar.style.width = btcDom.toFixed(1) + '%';
+    }
+    if (vol != null) {
+      setEl('volume-24h', formatMarketCap(vol));
+    }
+  }
+
+  function populateFearGreed(fngData) {
+    const item = fngData?.data?.[0];
+    if (!item) return;
+    setEl('fear-greed-value', item.value);
+    setEl('fear-greed-label', item.value_classification);
+  }
+
+  // ─── Main init ────────────────────────────────────────────────────────────
+  async function initMercado() {
+    hideError();
+    showTableSkeletons();
+
+    try {
+      // Fetch dollar rate first (independent server)
+      const dolaresResult = await api.getDolares();
+      if (dolaresResult.stale) showStale();
+
+      const blue = dolaresResult.byKey['blue'];
+      const blueRate = blue?.venta || 1;
+
+      // Show blue ref in header
+      if (blue) {
+        setEl('blue-ref-price', '$' + blueRate.toLocaleString('es-AR'));
+        const updated = blue.fechaActualizacion
+          ? new Date(blue.fechaActualizacion).toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' })
+          : 'ahora';
+        setEl('blue-ref-updated', 'Actualizado: ' + updated);
+      }
+
+      // Fetch CoinGecko data (stagger slightly to be safe)
+      const [marketsResult, globalResult, fngResult] = await Promise.all([
+        api.getCryptoMarkets(),
+        api.getCoinGeckoGlobal(),
+        api.getFearGreed()
+      ]);
+
+      if (marketsResult.stale) showStale();
+
+      renderTable(marketsResult.data, blueRate);
+      populateGlobal(globalResult.data);
+      populateFearGreed(fngResult.data);
+
+    } catch (err) {
+      showError('No se pudo cargar el mercado crypto.');
+      console.error('[DFA Mercado]', err);
+      // Clear skeleton on error
+      const tbody = document.getElementById('crypto-table-body');
+      if (tbody) tbody.innerHTML = `<tr><td colspan="6" class="p-12 text-center font-bold text-outline uppercase tracking-widest">Error al cargar datos. Recargá la página.</td></tr>`;
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', initMercado);
+})();
+</script>
+</body></html>
