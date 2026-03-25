@@ -9,7 +9,7 @@ import cors from 'cors';
 import { startCron } from './cron.js';
 import {
   fetchDolares, fetchBtcPrice, fetchMarkets, fetchGlobal,
-  fetchBtcHistory, fetchFearGreed, fetchBlueHistory
+  fetchBtcHistory, fetchBtcHistoryRange, fetchFearGreed, fetchBlueHistory
 } from './fetchers.js';
 import {
   getBtcPriceOnDate, getBlueHistory, getOficialHistory, getBtcCount,
@@ -217,26 +217,39 @@ async function autoSeed() {
     }
   }
 
-  // Seed BTC prices if DB has few rows — use days=365 (demo key limit)
+  // Seed BTC prices in 365-day chunks going back to 2013
   const btcCount = getBtcCount();
-  if (btcCount < 100) {
-    console.log('[AutoSeed] Seeding BTC prices from CoinGecko (days=365)...');
-    try {
-      const data = await fetchBtcHistory(365);
-      if (data?.prices) {
-        const insert = db.prepare('INSERT OR REPLACE INTO btc_prices (date, price_usd) VALUES (?, ?)');
-        const insertMany = db.transaction(rows => {
-          for (const [ts, price] of rows) {
-            const date = new Date(ts).toISOString().substring(0, 10);
-            insert.run(date, price);
-          }
-        });
-        insertMany(data.prices);
-        console.log(`[AutoSeed] BTC done: ${getBtcCount()} rows`);
+  if (btcCount < 3000) {
+    console.log(`[AutoSeed] BTC has ${btcCount} rows — seeding full history in chunks...`);
+    const insert = db.prepare('INSERT OR REPLACE INTO btc_prices (date, price_usd) VALUES (?, ?)');
+    const insertMany = db.transaction(rows => {
+      for (const [ts, price] of rows) {
+        insert.run(new Date(ts).toISOString().substring(0, 10), price);
       }
-    } catch (err) {
-      console.error('[AutoSeed] BTC seed failed:', err.message);
+    });
+
+    const now = Math.floor(Date.now() / 1000);
+    const btcGenesis = Math.floor(Date.UTC(2013, 3, 28) / 1000); // Apr 2013 — CoinGecko start
+    const oneYear = 365 * 24 * 60 * 60;
+
+    for (let to = now; to > btcGenesis; to -= oneYear) {
+      const from = Math.max(to - oneYear, btcGenesis);
+      try {
+        console.log(`[AutoSeed] BTC chunk: ${new Date(from * 1000).toISOString().substring(0, 10)} → ${new Date(to * 1000).toISOString().substring(0, 10)}`);
+        const data = await fetchBtcHistoryRange(from, to);
+        if (data?.prices?.length) {
+          insertMany(data.prices);
+          console.log(`[AutoSeed]   → ${data.prices.length} prices inserted`);
+        }
+        // Rate limit: wait 2s between requests (CoinGecko demo = 30 req/min)
+        await new Promise(r => setTimeout(r, 2000));
+      } catch (err) {
+        console.error(`[AutoSeed] BTC chunk failed:`, err.message);
+        // Wait longer on rate limit then continue
+        await new Promise(r => setTimeout(r, 10000));
+      }
     }
+    console.log(`[AutoSeed] BTC done: ${getBtcCount()} total rows`);
   }
 }
 

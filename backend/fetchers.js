@@ -65,6 +65,17 @@ export async function fetchBtcHistory(days = 365) {
 }
 
 /**
+ * Returns { prices: [[timestamp_ms, price_usd], ...] } for a date range
+ * from/to: Unix seconds
+ */
+export async function fetchBtcHistoryRange(fromSec, toSec) {
+  return fetchJSON(
+    `https://api.coingecko.com/api/v3/coins/bitcoin/market_chart/range?vs_currency=usd&from=${fromSec}&to=${toSec}`,
+    { headers: cgHeaders() }
+  );
+}
+
+/**
  * Returns BTC price for a specific date (DD-MM-YYYY)
  * Tries /history first, falls back to /market_chart/range
  */
