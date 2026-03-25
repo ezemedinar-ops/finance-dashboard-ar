@@ -163,13 +163,24 @@ const DFA_API = (function () {
   }
 
   /**
-   * Alternative.me — Fear & Greed index
+   * Alternative.me — Fear & Greed index (current)
    * Returns { data: [{ value, value_classification, timestamp }] }
    */
   async function getFearGreed() {
     return fetchWithCache(
       'dfa_fng',
       'https://api.alternative.me/fng/?limit=1'
+    );
+  }
+
+  /**
+   * Alternative.me — Fear & Greed index (last 30 days)
+   * Returns { data: [{ value, value_classification, timestamp }, ...] }
+   */
+  async function getFearGreed30() {
+    return fetchWithCache(
+      'dfa_fng_30',
+      'https://api.alternative.me/fng/?limit=30'
     );
   }
 
@@ -192,7 +203,7 @@ const DFA_API = (function () {
   function clearAll() {
     ['dfa_dolares','dfa_crypto_price','dfa_markets','dfa_global',
      'dfa_history_7d','dfa_history_30d','dfa_history_90d',
-     'dfa_blue_history','dfa_fng'].forEach(clearCache);
+     'dfa_blue_history','dfa_fng','dfa_fng_30'].forEach(clearCache);
   }
 
   return {
@@ -204,6 +215,7 @@ const DFA_API = (function () {
     getBtcHistoryByDate,
     getBlueHistory,
     getFearGreed,
+    getFearGreed30,
     clearDolares,
     clearBtcHistory,
     clearAll

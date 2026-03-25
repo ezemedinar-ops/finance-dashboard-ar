@@ -149,6 +149,16 @@
 </div>
 </header>
 
+<!-- Table Controls: Search + ARS Toggle -->
+<div class="flex flex-col sm:flex-row gap-3 mb-0 bg-surface-container-lowest border-b-4 border-surface-container px-4 py-4">
+  <input id="crypto-search" type="text" placeholder="Buscar activo..."
+    class="flex-1 bg-transparent border-2 border-primary px-4 py-2 font-bold text-sm uppercase tracking-widest placeholder:text-outline focus:outline-none focus:border-secondary" />
+  <button id="ars-toggle"
+    class="border-2 border-primary px-4 py-2 font-black text-[10px] uppercase tracking-widest hover:bg-primary hover:text-white transition-colors whitespace-nowrap">
+    Ver en ARS
+  </button>
+</div>
+
 <!-- Market Table Section -->
 <section class="bg-surface-container-lowest overflow-hidden">
 <div class="overflow-x-auto">
@@ -157,10 +167,10 @@
 <tr class="border-b-4 border-primary">
 <th class="p-3 md:p-6 text-[10px] font-black uppercase tracking-widest text-primary">#</th>
 <th class="p-3 md:p-6 text-[10px] font-black uppercase tracking-widest text-primary">Activo</th>
-<th class="p-3 md:p-6 text-[10px] font-black uppercase tracking-widest text-primary text-right">Precio USD</th>
+<th data-sort="price" class="p-3 md:p-6 text-[10px] font-black uppercase tracking-widest text-primary text-right cursor-pointer select-none hover:text-secondary"><span id="price-col-header">Precio USD</span><span class="sort-ind ml-1"></span></th>
 <th class="p-3 md:p-6 text-[10px] font-black uppercase tracking-widest text-primary text-right hidden sm:table-cell">ARS (Blue)</th>
-<th class="p-3 md:p-6 text-[10px] font-black uppercase tracking-widest text-primary text-right">Var. 24h</th>
-<th class="p-3 md:p-6 text-[10px] font-black uppercase tracking-widest text-primary text-right hidden lg:table-cell">Market Cap</th>
+<th data-sort="change" class="p-3 md:p-6 text-[10px] font-black uppercase tracking-widest text-primary text-right cursor-pointer select-none hover:text-secondary">Var. 24h<span class="sort-ind ml-1"></span></th>
+<th data-sort="mcap" class="p-3 md:p-6 text-[10px] font-black uppercase tracking-widest text-primary text-right hidden lg:table-cell cursor-pointer select-none hover:text-secondary">Market Cap<span class="sort-ind ml-1"></span></th>
 </tr>
 </thead>
 <tbody id="crypto-table-body" class="divide-y-4 divide-surface-container">
@@ -172,15 +182,10 @@
 
 <!-- Grid Layout for Additional Data -->
 <section class="mt-12 grid grid-cols-1 md:grid-cols-3 gap-8">
-<div class="bg-primary text-white p-8">
-<h3 class="font-['Inter'] font-black uppercase tracking-[0.2em] text-[10px] mb-8">Dominancia</h3>
-<div class="mb-4">
-<span id="btc-dominance" class="text-6xl font-black tracking-tighter">—</span>
-</div>
-<p class="text-xs font-bold uppercase tracking-widest text-on-primary-container mb-4">Bitcoin</p>
-<div class="w-full bg-primary-container h-2">
-<div id="dominance-bar" class="bg-white h-full" style="width:0%"></div>
-</div>
+<div class="bg-primary text-white p-6 flex flex-col gap-4">
+<h3 class="font-['Inter'] font-black uppercase tracking-[0.2em] text-[10px]">Dominancia</h3>
+<canvas id="dominance-chart" height="160"></canvas>
+<div id="dominance-legend" class="flex flex-col gap-2 text-[10px] font-bold uppercase tracking-widest"></div>
 </div>
 <div class="bg-surface-container-lowest border-4 border-primary p-8">
 <h3 class="font-['Inter'] font-black uppercase tracking-[0.2em] text-[10px] text-primary mb-8">Volumen 24h</h3>
@@ -190,15 +195,20 @@
 <span id="volume-label">Global crypto market</span>
 </div>
 </div>
-<div class="bg-secondary text-white p-8">
-<h3 class="font-['Inter'] font-black uppercase tracking-[0.2em] text-[10px] mb-8">Miedo/Codicia</h3>
-<div class="flex items-center justify-between">
-<div id="fear-greed-value" class="text-6xl font-black tracking-tighter">—</div>
-<div class="text-right">
-<div class="text-xs font-black uppercase tracking-widest opacity-80">Sentiment</div>
-<div id="fear-greed-label" class="text-xl font-black uppercase tracking-tight">—</div>
+<div class="bg-secondary text-white p-6 flex flex-col gap-4">
+<h3 class="font-['Inter'] font-black uppercase tracking-[0.2em] text-[10px]">Miedo/Codicia</h3>
+<!-- Semicircle gauge -->
+<div class="relative flex justify-center">
+  <canvas id="fear-greed-gauge" width="200" height="110"></canvas>
+  <div class="absolute bottom-0 text-center pointer-events-none">
+    <div id="fear-greed-value" class="text-4xl font-black tracking-tighter leading-none">—</div>
+    <div id="fear-greed-label" class="text-[10px] font-black uppercase tracking-widest opacity-80 mt-1">—</div>
+  </div>
 </div>
-</div>
+<!-- 30-day mini chart -->
+<canvas id="fear-greed-history" height="60"></canvas>
+<!-- Context text -->
+<p id="fear-greed-context" class="text-[10px] font-bold opacity-70 leading-relaxed"></p>
 </div>
 </section>
 </main>
@@ -234,36 +244,56 @@
   const { formatARS, formatMarketCap, changeClass, changeIcon, showTableSkeletons, showError, showStale, hideError } = window.DFA;
   const api = window.DFA_API;
 
+  // ─── Module state ─────────────────────────────────────────────────────────
+  let allCoins = [];
+  let blueRateGlobal = 1;
+  let sortState = { col: null, dir: 'desc' };
+  let showARS = false;
+
   function setEl(id, text) {
     const el = document.getElementById(id);
     if (el) el.textContent = text;
   }
 
+  function escapeHtml(str) {
+    return String(str)
+      .replace(/&/g,'&amp;').replace(/</g,'&lt;')
+      .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
   // ─── Build one table row ─────────────────────────────────────────────────
-  function buildRow(coin, index, blueRate) {
+  function buildRow(coin, index) {
     const change = coin.price_change_percentage_24h || 0;
     const colorClass = changeClass(change);
     const icon = changeIcon(change);
     const ticker = coin.symbol.toUpperCase().substring(0, 5);
-    const arsPrice = coin.current_price * blueRate;
+    const arsPrice = coin.current_price * blueRateGlobal;
 
-    const usdFormatted = '$' + coin.current_price.toLocaleString('en-US', {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: coin.current_price < 1 ? 6 : 2
-    });
+    const priceDisplay = showARS
+      ? formatARS(arsPrice)
+      : '$' + coin.current_price.toLocaleString('en-US', {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: coin.current_price < 1 ? 6 : 2
+        });
 
-    return `<tr class="hover:bg-surface-container-high transition-colors group">
+    const fallbackBadge = `<div class='w-8 h-8 md:w-10 md:h-10 bg-primary flex items-center justify-center text-white font-black text-[9px] shrink-0'>${ticker}</div>`;
+
+    const logoHtml = coin.image
+      ? `<img src="${escapeHtml(coin.image)}" alt="${ticker}" class="w-8 h-8 md:w-10 md:h-10 shrink-0 object-contain" onerror="this.outerHTML='${fallbackBadge.replace(/'/g, '&#39;')}'"/>`
+      : fallbackBadge;
+
+    return `<tr class="hover:bg-surface-container-high transition-colors">
       <td class="p-3 md:p-6 font-black text-outline">${String(index + 1).padStart(2, '0')}</td>
       <td class="p-3 md:p-6">
         <div class="flex items-center gap-3">
-          <div class="w-8 h-8 md:w-10 md:h-10 bg-primary flex items-center justify-center text-white font-black text-[9px] md:text-[10px] shrink-0">${ticker}</div>
+          ${logoHtml}
           <div>
             <div class="font-black text-sm md:text-lg uppercase tracking-tight">${escapeHtml(coin.name)}</div>
             <div class="text-[10px] font-bold text-outline tracking-widest">${ticker}/USD</div>
           </div>
         </div>
       </td>
-      <td class="p-3 md:p-6 text-right font-black text-base md:text-xl tracking-tighter">${usdFormatted}</td>
+      <td class="p-3 md:p-6 text-right font-black text-base md:text-xl tracking-tighter">${priceDisplay}</td>
       <td class="p-3 md:p-6 text-right font-bold text-secondary tracking-tighter hidden sm:table-cell">${formatARS(arsPrice)}</td>
       <td class="p-3 md:p-6 text-right">
         <div class="inline-flex items-center gap-1 font-black ${colorClass}">
@@ -275,41 +305,203 @@
     </tr>`;
   }
 
-  function escapeHtml(str) {
-    return String(str)
-      .replace(/&/g,'&amp;').replace(/</g,'&lt;')
-      .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-  }
+  // ─── Render table with current filter + sort ─────────────────────────────
+  function applyFiltersAndSort() {
+    const query = (document.getElementById('crypto-search')?.value || '').trim().toLowerCase();
+    let coins = query
+      ? allCoins.filter(c => c.name.toLowerCase().includes(query) || c.symbol.toLowerCase().includes(query))
+      : [...allCoins];
 
-  // ─── Render full table ───────────────────────────────────────────────────
-  function renderTable(coins, blueRate) {
+    if (sortState.col) {
+      const keyMap = { price: 'current_price', change: 'price_change_percentage_24h', mcap: 'market_cap' };
+      const key = keyMap[sortState.col];
+      coins.sort((a, b) => sortState.dir === 'desc' ? (b[key] || 0) - (a[key] || 0) : (a[key] || 0) - (b[key] || 0));
+    }
+
     const tbody = document.getElementById('crypto-table-body');
     if (!tbody) return;
-    tbody.innerHTML = coins.map((c, i) => buildRow(c, i, blueRate)).join('');
+    if (coins.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="6" class="p-12 text-center font-bold text-outline uppercase tracking-widest">Sin resultados</td></tr>`;
+      return;
+    }
+    tbody.innerHTML = coins.map((c, i) => buildRow(c, i)).join('');
+  }
+
+  function updateSortIndicators() {
+    document.querySelectorAll('th[data-sort]').forEach(th => {
+      const ind = th.querySelector('.sort-ind');
+      if (!ind) return;
+      ind.textContent = th.dataset.sort === sortState.col
+        ? (sortState.dir === 'desc' ? ' ↓' : ' ↑')
+        : '';
+    });
+  }
+
+  // ─── Table interactivity ─────────────────────────────────────────────────
+  function setupTableInteractivity() {
+    document.querySelectorAll('th[data-sort]').forEach(th => {
+      th.addEventListener('click', () => {
+        const col = th.dataset.sort;
+        if (sortState.col === col) {
+          sortState.dir = sortState.dir === 'desc' ? 'asc' : 'desc';
+        } else {
+          sortState.col = col;
+          sortState.dir = 'desc';
+        }
+        updateSortIndicators();
+        applyFiltersAndSort();
+      });
+    });
+
+    document.getElementById('crypto-search')?.addEventListener('input', applyFiltersAndSort);
+
+    document.getElementById('ars-toggle')?.addEventListener('click', () => {
+      showARS = !showARS;
+      const btn = document.getElementById('ars-toggle');
+      if (btn) btn.textContent = showARS ? 'Ver en USD' : 'Ver en ARS';
+      const header = document.getElementById('price-col-header');
+      if (header) header.textContent = showARS ? 'Precio ARS' : 'Precio USD';
+      applyFiltersAndSort();
+    });
+  }
+
+  // ─── Dominance donut chart ────────────────────────────────────────────────
+  function drawDominanceDonut(d) {
+    const btc = +(d.market_cap_percentage?.btc || 0).toFixed(1);
+    const eth = +(d.market_cap_percentage?.eth || 0).toFixed(1);
+    const others = Math.max(+(100 - btc - eth).toFixed(1), 0);
+
+    const ctx = document.getElementById('dominance-chart')?.getContext('2d');
+    if (!ctx) return;
+
+    new Chart(ctx, {
+      type: 'doughnut',
+      data: {
+        labels: ['Bitcoin', 'Ethereum', 'Otros'],
+        datasets: [{
+          data: [btc, eth, others],
+          backgroundColor: ['#ffffff', '#5f93ff', 'rgba(255,255,255,0.25)'],
+          borderWidth: 0
+        }]
+      },
+      options: {
+        cutout: '65%',
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            callbacks: { label: ctx => ` ${ctx.label}: ${ctx.raw}%` }
+          }
+        },
+        animation: { duration: 800 }
+      }
+    });
+
+    const legend = document.getElementById('dominance-legend');
+    if (legend) {
+      legend.innerHTML = [
+        ['#ffffff', `BTC ${btc}%`],
+        ['#5f93ff', `ETH ${eth}%`],
+        ['rgba(255,255,255,0.35)', `Otros ${others}%`]
+      ].map(([color, label]) =>
+        `<div class="flex items-center gap-2"><span style="background:${color};display:inline-block;width:10px;height:10px;flex-shrink:0;"></span><span>${label}</span></div>`
+      ).join('');
+    }
+  }
+
+  // ─── Fear/Greed gauge ────────────────────────────────────────────────────
+  function drawGauge(value) {
+    const ctx = document.getElementById('fear-greed-gauge')?.getContext('2d');
+    if (!ctx) return;
+    const v = Math.max(0, Math.min(100, value));
+    new Chart(ctx, {
+      type: 'doughnut',
+      data: {
+        datasets: [
+          // Background: 5 color zones
+          {
+            data: [20, 20, 20, 20, 20],
+            backgroundColor: ['#b91c1c', '#ef4444', '#f59e0b', '#22c55e', '#15803d'],
+            borderWidth: 0,
+            weight: 3
+          },
+          // Needle marker: transparent | white dot | transparent
+          {
+            data: [Math.max(v - 1.5, 0), 3, Math.max(97.5 - v, 0)],
+            backgroundColor: ['transparent', 'white', 'transparent'],
+            borderWidth: 0,
+            weight: 1
+          }
+        ]
+      },
+      options: {
+        rotation: -90,
+        circumference: 180,
+        cutout: '55%',
+        plugins: { tooltip: { enabled: false }, legend: { display: false } },
+        animation: { duration: 800 }
+      }
+    });
+  }
+
+  function drawFngHistory(items) {
+    const ctx = document.getElementById('fear-greed-history')?.getContext('2d');
+    if (!ctx || !items?.length) return;
+    const reversed = [...items].reverse();
+    const labels = reversed.map(i => {
+      const d = new Date(+i.timestamp * 1000);
+      return d.toLocaleDateString('es-AR', { day: '2-digit', month: '2-digit' });
+    });
+    const values = reversed.map(i => +i.value);
+    new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels,
+        datasets: [{
+          data: values,
+          borderColor: 'rgba(255,255,255,0.75)',
+          borderWidth: 1.5,
+          pointRadius: 0,
+          tension: 0.3,
+          fill: false
+        }]
+      },
+      options: {
+        plugins: { legend: { display: false }, tooltip: { enabled: false } },
+        scales: {
+          x: { display: false },
+          y: { display: false, min: 0, max: 100 }
+        },
+        animation: { duration: 600 }
+      }
+    });
+  }
+
+  function fngContextText(value) {
+    if (value <= 25) return 'Pánico extremo en el mercado global. Históricamente una señal de compra para inversores de largo plazo.';
+    if (value <= 45) return 'Miedo generalizado. El mercado está cauteloso, lo que puede crear oportunidades de entrada.';
+    if (value <= 55) return 'Sentimiento neutro. El mercado no muestra señales claras en ninguna dirección.';
+    if (value <= 75) return 'Codicia creciente. Los precios tienden a subir pero aumenta el riesgo de corrección.';
+    return 'Codicia extrema. Mercado sobrecomprado — históricamente precede correcciones importantes.';
   }
 
   // ─── Populate stat cards ─────────────────────────────────────────────────
   function populateGlobal(globalData) {
     const d = globalData?.data;
     if (!d) return;
-    const btcDom = d.market_cap_percentage?.btc;
     const vol = d.total_volume?.usd;
-
-    if (btcDom != null) {
-      setEl('btc-dominance', btcDom.toFixed(1) + '%');
-      const bar = document.getElementById('dominance-bar');
-      if (bar) bar.style.width = btcDom.toFixed(1) + '%';
-    }
-    if (vol != null) {
-      setEl('volume-24h', formatMarketCap(vol));
-    }
+    if (vol != null) setEl('volume-24h', formatMarketCap(vol));
+    drawDominanceDonut(d);
   }
 
-  function populateFearGreed(fngData) {
+  function populateFearGreed(fngData, fng30Data) {
     const item = fngData?.data?.[0];
     if (!item) return;
-    setEl('fear-greed-value', item.value);
+    const value = +item.value;
+    setEl('fear-greed-value', value);
     setEl('fear-greed-label', item.value_classification);
+    setEl('fear-greed-context', fngContextText(value));
+    drawGauge(value);
+    if (fng30Data?.data) drawFngHistory(fng30Data.data);
   }
 
   // ─── Main init ────────────────────────────────────────────────────────────
@@ -318,39 +510,38 @@
     showTableSkeletons();
 
     try {
-      // Fetch dollar rate first (independent server)
       const dolaresResult = await api.getDolares();
       if (dolaresResult.stale) showStale();
 
       const blue = dolaresResult.byKey['blue'];
-      const blueRate = blue?.venta || 1;
+      blueRateGlobal = blue?.venta || 1;
 
-      // Show blue ref in header
       if (blue) {
-        setEl('blue-ref-price', '$' + blueRate.toLocaleString('es-AR'));
+        setEl('blue-ref-price', '$' + blueRateGlobal.toLocaleString('es-AR'));
         const updated = blue.fechaActualizacion
           ? new Date(blue.fechaActualizacion).toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' })
           : 'ahora';
         setEl('blue-ref-updated', 'Actualizado: ' + updated);
       }
 
-      // Fetch CoinGecko data (stagger slightly to be safe)
-      const [marketsResult, globalResult, fngResult] = await Promise.all([
+      const [marketsResult, globalResult, fngResult, fng30Result] = await Promise.all([
         api.getCryptoMarkets(),
         api.getCoinGeckoGlobal(),
-        api.getFearGreed()
+        api.getFearGreed(),
+        api.getFearGreed30()
       ]);
 
       if (marketsResult.stale) showStale();
 
-      renderTable(marketsResult.data, blueRate);
+      allCoins = marketsResult.data || [];
+      setupTableInteractivity();
+      applyFiltersAndSort();
       populateGlobal(globalResult.data);
-      populateFearGreed(fngResult.data);
+      populateFearGreed(fngResult.data, fng30Result.data);
 
     } catch (err) {
       showError('No se pudo cargar el mercado crypto.');
       console.error('[DFA Mercado]', err);
-      // Clear skeleton on error
       const tbody = document.getElementById('crypto-table-body');
       if (tbody) tbody.innerHTML = `<tr><td colspan="6" class="p-12 text-center font-bold text-outline uppercase tracking-widest">Error al cargar datos. Recargá la página.</td></tr>`;
     }
