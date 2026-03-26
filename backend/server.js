@@ -106,13 +106,15 @@ app.get('/api/btc-price', async (req, res) => {
   }
 });
 
-// Crypto: top 20 markets (enriched with volatility score)
+// Crypto: markets (enriched with volatility score, supports page + category)
 app.get('/api/markets', async (req, res) => {
+  const page = Math.max(1, parseInt(req.query.page) || 1);
+  const category = req.query.category || '';
+  const cacheKey = `markets-${page}-${category || 'all'}`;
   try {
-    const raw = await withCache('markets', MIN5, fetchMarkets);
+    const raw = await withCache(cacheKey, MIN5, () => fetchMarkets(page, category));
     const enriched = raw.map(coin => {
-      const sparkPrices = coin.sparkline_in_7d?.price;
-      const volatility_7d = calcVolatility(sparkPrices);
+      const volatility_7d = calcVolatility(coin.sparkline_in_7d?.price);
       const { sparkline_in_7d, ...rest } = coin;
       return { ...rest, volatility_7d };
     });

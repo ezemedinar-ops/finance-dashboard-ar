@@ -84,9 +84,11 @@ const DFA_API = (function () {
     return fetchWithCache('dfa_crypto_price', '/api/btc-price');
   }
 
-  /** Top 20 coins by market cap */
-  async function getCryptoMarkets() {
-    return fetchWithCache('dfa_markets', '/api/markets');
+  /** Coins by market cap — supports page and network category */
+  async function getCryptoMarkets(page = 1, category = '') {
+    const cacheKey = `dfa_markets_p${page}_${category || 'all'}`;
+    const params = `?page=${page}${category ? `&category=${encodeURIComponent(category)}` : ''}`;
+    return fetchWithCache(cacheKey, `/api/markets${params}`);
   }
 
   /** Global market data — { data: { market_cap_percentage, total_volume, ... } } */

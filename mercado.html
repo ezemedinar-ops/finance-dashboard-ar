@@ -150,6 +150,15 @@
 </div>
 </header>
 
+<!-- Network Filters -->
+<div id="network-filters" class="flex flex-wrap gap-0 bg-surface-container-lowest border-b-4 border-primary px-4 py-3">
+  <button data-cat="" class="net-btn px-4 py-2 font-black text-[10px] uppercase tracking-widest bg-primary text-white transition-colors">Todos</button>
+  <button data-cat="ethereum-ecosystem" class="net-btn px-4 py-2 font-black text-[10px] uppercase tracking-widest border-r border-b border-t border-primary text-primary hover:bg-primary hover:text-white transition-colors">ETH</button>
+  <button data-cat="binance-smart-chain" class="net-btn px-4 py-2 font-black text-[10px] uppercase tracking-widest border-r border-b border-t border-primary text-primary hover:bg-primary hover:text-white transition-colors">BSC</button>
+  <button data-cat="solana-ecosystem" class="net-btn px-4 py-2 font-black text-[10px] uppercase tracking-widest border-r border-b border-t border-primary text-primary hover:bg-primary hover:text-white transition-colors">SOL</button>
+  <button data-cat="polygon-ecosystem" class="net-btn px-4 py-2 font-black text-[10px] uppercase tracking-widest border-r border-b border-t border-primary text-primary hover:bg-primary hover:text-white transition-colors">POL</button>
+</div>
+
 <!-- Table Controls: Search + ARS Toggle -->
 <div class="flex flex-col sm:flex-row gap-3 mb-0 bg-surface-container-lowest border-b-4 border-surface-container px-4 py-4">
   <input id="crypto-search" type="text" placeholder="Buscar activo..."
@@ -181,6 +190,13 @@
 </table>
 </div>
 </section>
+
+<!-- Load More -->
+<div id="load-more-container" class="flex justify-center py-6 bg-surface-container-lowest border-t-4 border-surface-container">
+  <button id="load-more-btn" class="px-12 py-3 bg-primary text-white font-black uppercase tracking-widest text-sm hover:bg-[#5a0002] transition-colors active:scale-95 duration-100">
+    Cargar más
+  </button>
+</div>
 
 <!-- Grid Layout for Additional Data -->
 <section class="mt-12 grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -251,6 +267,10 @@
   let blueRateGlobal = 1;
   let sortState = { col: null, dir: 'desc' };
   let showARS = false;
+  let currentPage = 1;
+  let currentCategory = '';
+  let hasMore = true;
+  let loadingMore = false;
 
   function setEl(id, text) {
     const el = document.getElementById(id);
@@ -518,6 +538,68 @@
     if (fng30Data?.data) drawFngHistory(fng30Data.data);
   }
 
+  // ─── Load More button visibility ─────────────────────────────────────────
+  function updateLoadMoreBtn() {
+    const container = document.getElementById('load-more-container');
+    if (!container) return;
+    container.style.display = hasMore ? 'flex' : 'none';
+  }
+
+  // ─── Load coins (reset=true: replace allCoins; false: append) ────────────
+  async function loadCoins(reset = false) {
+    if (loadingMore) return;
+    loadingMore = true;
+
+    if (reset) {
+      currentPage = 1;
+      hasMore = true;
+      allCoins = [];
+      showTableSkeletons();
+    } else {
+      const btn = document.getElementById('load-more-btn');
+      if (btn) btn.textContent = 'Cargando...';
+    }
+
+    try {
+      const result = await api.getCryptoMarkets(currentPage, currentCategory);
+      const coins = result.data || [];
+      if (reset) {
+        allCoins = coins;
+      } else {
+        allCoins = [...allCoins, ...coins];
+      }
+      if (coins.length < 20) hasMore = false;
+      applyFiltersAndSort();
+      updateLoadMoreBtn();
+    } catch (err) {
+      console.error('[DFA Mercado] loadCoins error:', err);
+      if (reset) {
+        const tbody = document.getElementById('crypto-table-body');
+        if (tbody) tbody.innerHTML = `<tr><td colspan="7" class="p-12 text-center font-bold text-outline uppercase tracking-widest">Error al cargar datos. Recargá la página.</td></tr>`;
+      }
+    } finally {
+      loadingMore = false;
+      const btn = document.getElementById('load-more-btn');
+      if (btn) btn.textContent = 'Cargar más';
+    }
+  }
+
+  // ─── Network filters ──────────────────────────────────────────────────────
+  function setupNetworkFilters() {
+    document.querySelectorAll('.net-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.net-btn').forEach(b => {
+          b.classList.remove('bg-primary', 'text-white');
+          b.classList.add('text-primary');
+        });
+        btn.classList.add('bg-primary', 'text-white');
+        btn.classList.remove('text-primary');
+        currentCategory = btn.dataset.cat || '';
+        loadCoins(true);
+      });
+    });
+  }
+
   // ─── Main init ────────────────────────────────────────────────────────────
   async function initMercado() {
     hideError();
@@ -538,18 +620,20 @@
         setEl('blue-ref-updated', 'Actualizado: ' + updated);
       }
 
-      const [marketsResult, globalResult, fngResult, fng30Result] = await Promise.all([
-        api.getCryptoMarkets(),
+      const [globalResult, fngResult, fng30Result] = await Promise.all([
         api.getCoinGeckoGlobal(),
         api.getFearGreed(),
         api.getFearGreed30()
       ]);
 
-      if (marketsResult.stale) showStale();
-
-      allCoins = marketsResult.data || [];
       setupTableInteractivity();
-      applyFiltersAndSort();
+      setupNetworkFilters();
+      document.getElementById('load-more-btn')?.addEventListener('click', () => {
+        currentPage++;
+        loadCoins(false);
+      });
+
+      await loadCoins(true);
 
       // Stat cards are non-critical — a chart error must not wipe the table
       try {

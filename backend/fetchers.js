@@ -37,10 +37,11 @@ export async function fetchBtcPrice() {
   );
 }
 
-/** Returns array of top 20 coins with image, price, market_cap, etc. */
-export async function fetchMarkets() {
+/** Returns array of coins with image, price, market_cap, etc. */
+export async function fetchMarkets(page = 1, category = '') {
+  const cat = category ? `&category=${encodeURIComponent(category)}` : '';
   return fetchJSON(
-    'https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=20&page=1&sparkline=true&price_change_percentage=24h',
+    `https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=20&page=${page}&sparkline=true&price_change_percentage=24h${cat}`,
     { headers: cgHeaders() }
   );
 }
